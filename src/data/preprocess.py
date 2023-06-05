@@ -28,7 +28,7 @@ def split(df):
 
     return X_train, X_test, y_train, y_test
 
-def preprocessor(X_train, X_test, y_train, y_test):
+def preprocessing(X_train, X_test, y_train, y_test):
     # define categorical and numerical transformers
     categorical_transformer = Pipeline(steps=[
         # ('SimpleImputer', SimpleImputer(strategy='most_frequent')),

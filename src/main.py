@@ -12,7 +12,7 @@ df = cleaning.ordinal_encoding(df)
 
 # preprocessing
 X_train, X_test, y_train, y_test = preprocess.split(df)
-X_train_processed, y_train_processed, X_test_processed, y_test_processed = preprocess.preprocessor(X_train, X_test, y_train, y_test)
+X_train_processed, y_train_processed, X_test_processed, y_test_processed = preprocess.preprocessing(X_train, X_test, y_train, y_test)
 
 # train the model
 randomforest.randomforestmodel(X_train_processed, y_train_processed)
