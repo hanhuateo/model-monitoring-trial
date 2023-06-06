@@ -3,7 +3,7 @@ import pandas as pd
 from data_manipulation.cleaning import *
 from data_manipulation.understandings import *
 from data_manipulation.preprocess import *
-import randomforest
+from models.randomforest import *
 from joblib import load
 
 # read data
@@ -21,4 +21,7 @@ X_train, X_test, y_train, y_test = split(df)
 X_train_processed, y_train_processed, X_test_processed, y_test_processed = preprocessing(X_train, X_test, y_train, y_test)
 
 # train the model
-randomforest.randomforestmodel(X_train_processed, y_train_processed)
+RF_clf = randomforestmodel(X_train_processed, y_train_processed)
+performance_metrics(RF_clf, X_train_processed, y_train_processed, "train")
+performance_metrics(RF_clf, X_test_processed, y_test_processed, "test")
+plot_evaluation_curves(RF_clf, X_train_processed, y_train_processed, X_test_processed, y_test_processed)
