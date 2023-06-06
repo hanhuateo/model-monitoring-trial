@@ -30,4 +30,4 @@ print(f"Shape of X_test_processed: {X_test_processed.shape}, Shape of y_test_pro
 RF_clf = randomforestmodel(X_train_processed, y_train_processed)
 performance_metrics(RF_clf, X_train_processed, y_train_processed, "train")
 performance_metrics(RF_clf, X_test_processed, y_test_processed, "test")
-plot_evaluation_curves(RF_clf, X_train_processed, y_train_processed, X_test_processed, y_test_processed)
+plot_evaluation_curves(RF_clf, X_train_processed, X_test_processed, y_train_processed, y_test_processed)
