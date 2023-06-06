@@ -4,7 +4,6 @@ from data_manipulation.cleaning import *
 from data_manipulation.understandings import *
 from data_manipulation.preprocess import *
 from models.randomforest import *
-from joblib import load
 
 # read data
 df = pd.read_csv("./data/split_data/train_dataset.csv")
