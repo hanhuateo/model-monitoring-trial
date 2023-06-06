@@ -2,12 +2,15 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, average_precision_score
 from sklearn.metrics import roc_curve, precision_recall_curve
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 from joblib import dump
+from warnings import simplefilter
+simplefilter(action='ignore', category=FutureWarning)
 
 def performance_metrics(model, X, y, type):
 
@@ -22,7 +25,7 @@ def performance_metrics(model, X, y, type):
     # print("\n" "#=====#=====#===== Classification Report =====#=====#=====#")
     # print(classification_report(y, y_pred))
 
-    plt.savefig('./metrics_graph/training_model_performance_metrics_{}.html'.format(type), format='html')
+    plt.savefig('./metrics_graphs/training_model_performance_metrics_{}.png'.format(type), format='png')
 
 def plot_evaluation_curves(model, X_train, X_test, y_train, y_test):
     performance_metrics = {}
@@ -117,7 +120,7 @@ def plot_evaluation_curves(model, X_train, X_test, y_train, y_test):
         
     
     df_performance_metrics = pd.DataFrame(performance_metrics).round(2)
-    plt.savefig('./metrics_graphs/training_model_evaluation_curves.html', format='html')
+    plt.savefig('./metrics_graphs/training_model_evaluation_curves.png', format='png')
     
 def randomforestmodel(X_train_processed, y_train_processed):
     RF_clf = RandomForestClassifier(class_weight='balanced', random_state=42)
@@ -137,5 +140,5 @@ def randomforestmodel(X_train_processed, y_train_processed):
 
     RF_clf = RandomForestClassifier(**RF_search.best_params_, class_weight='balanced', random_state=42)
     RF_clf.fit(X_train_processed, y_train_processed)
-    dump(RF_clf, "../data/models/RF_clf.joblib")
+    dump(RF_clf, '../data/models/RF_clf.joblib')
     return RF_clf

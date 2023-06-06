@@ -6,7 +6,7 @@ from data_manipulation.preprocess import *
 from models.randomforest import *
 
 # read data
-df = pd.read_csv("./data/split_data/train_dataset.csv")
+df = pd.read_csv("../data/split_data/train_dataset.csv")
 
 # clean data
 df = drop_columns(df)
