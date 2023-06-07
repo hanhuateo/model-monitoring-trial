@@ -11,6 +11,8 @@ from sklearn.model_selection import GridSearchCV
 from joblib import dump
 from warnings import simplefilter
 simplefilter(action='ignore', category=FutureWarning)
+import plotly
+import plotly.graph_objs as go
 
 def performance_metrics(model, X, y, type):
 
@@ -22,8 +24,8 @@ def performance_metrics(model, X, y, type):
                         columns=['Pred Negative: 0', 'Pred Positive: 1'])
     sns.heatmap(cm_df, annot=True, fmt='d', cmap='YlGnBu')
 
-    # print("\n" "#=====#=====#===== Classification Report =====#=====#=====#")
-    # print(classification_report(y, y_pred))
+    print("\n" "#=====#=====#===== Classification Report =====#=====#=====#")
+    print(classification_report(y, y_pred))
 
     plt.savefig('./metrics_graphs/training_model_performance_metrics_{}.png'.format(type), format='png')
 

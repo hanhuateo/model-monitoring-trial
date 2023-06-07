@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
 
-from sklearn.datasets import fetch_california_housing
-
 from evidently import ColumnMapping
 
 from evidently.report import Report
@@ -15,3 +13,34 @@ from evidently.tests.base_test import generate_column_tests
 from evidently.test_preset import DataStabilityTestPreset, NoTargetPerformanceTestPreset
 from evidently.tests import *
 
+def setDataDriftPreset(report):
+    report = Report(metrics=[
+        DataDriftPreset(),
+    ])
+    return report
+
+def setColumnMetric(report, colName):
+    report = Report(metrics=[
+        ColumnSummaryMetric(column_name=colName),
+        ColumnQuantileMetric(column_name=colName, quantile=0.25),
+        ColumnDriftMetric(column_name=colName)
+    ])
+    return report
+
+def setTests(tests):
+    tests = TestSuite(tests=[
+        TestNumberOfColumnsWithMissingValues(),
+        TestNumberOfRowsWithMissingValues(),
+        TestNumberOfConstantColumns(),
+        TestNumberOfDuplicatedRows(),
+        TestNumberOfDuplicatedColumns(),
+        TestColumnsType(),
+        TestNumberOfDriftedColumns(),
+    ])
+    return tests
+
+def setNoTargetTest(tests):
+    tests = TestSuite(tests=[
+        NoTargetPerformanceTestPreset(),
+    ])
+    return tests
