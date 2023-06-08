@@ -3,6 +3,9 @@ import seaborn as sns
 import pandas as pd
 from joblib import load
 from monitoring.evidently import *
+from data_manipulation.cleaning import *
+from data_manipulation.understandings import *
+from data_manipulation.preprocess import *
 
 RF_clf = load('../data/models/RF_clf.joblib')
 reference = pd.read_csv('../data/split_data/train_dataset.csv')
@@ -36,3 +39,7 @@ current = pd.read_csv('../data/split_data/test_dataset.csv')
 # report = setNoTargetTest(report)
 # report.run(current_data=current, reference_data=reference)
 # report.save_html('./monitoring/reports/NoTargetTestsReport.html')
+
+current = current.drop(columns='Attrition', index=False)
+current = drop_columns(current)
+current = ordinal_encoding(current)
