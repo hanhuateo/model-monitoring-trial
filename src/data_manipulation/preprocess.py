@@ -18,6 +18,8 @@ import pandas as pd
 
 from joblib import dump
 
+import csv
+
 def split(df):
     X = df.drop(columns=['Attrition'])
     y = df['Attrition']
@@ -34,6 +36,27 @@ def split(df):
     X_test.reset_index(drop=True, inplace=True)
     y_test.reset_index(drop=True, inplace=True)
 
+    # with open('../data/split_data/X_train.csv', 'w', newline='') as file:
+    #     writer = csv.writer(file)
+    #     writer.writerow(X_train)
+
+    # with open('../data/split_data/X_test.csv', 'w', newline='') as file:
+    #     writer = csv.writer(file)
+    #     writer.writerow(X_test)
+
+    with open('../data/split_data/y_train.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(y_train)
+
+    with open('../data/split_data/y_test.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(y_train)
+
+    df1 = pd.read_csv('../data/split_data/y_train.csv')
+    df2 = pd.read_csv('../data/split_data/y_test.csv')
+    df3 = pd.concat([df1, df2], axis=0)     
+    df3.to_csv('../data/split_data/y_combined.csv', index=False)
+    
     return X_train, X_test, y_train, y_test
 
 
@@ -75,7 +98,7 @@ def train_preprocessing(X_train, X_test, y_train, y_test):
     df3.to_csv('../data/processed/combined_X_train_test_processed.csv', index=False)
 
     dump(preprocessor, '../data/preprocessor/column_transformer.pkl')
-    
+
     LE = LabelEncoder()
     y_train_processed = LE.fit_transform(y_train)
     print(f"Shape of y_train_processed after preprocessing: {y_train_processed.shape}")
@@ -86,7 +109,7 @@ def train_preprocessing(X_train, X_test, y_train, y_test):
     print(f"y_train after preprocessing: {y_train_processed}")
     print(f"y_train before preprocessing: {LE.inverse_transform(y_train_processed)}") 
 
-    return X_train_processed,  X_test_processed, y_train_processed, y_test_processed
+    return X_train_processed, X_test_processed, y_train_processed, y_test_processed
 
 def test_preprocessing(X, preprocessor):
     X_processed = preprocessor.transform(X)
