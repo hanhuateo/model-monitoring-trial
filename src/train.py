@@ -22,7 +22,7 @@ X_train, X_test, y_train, y_test = split(df)
 print(f"Shape of X_train: {X_train.shape}, Shape of y_train: {y_train.shape}")
 print(f"Shape of X_test: {X_test.shape}, Shape of y_test: {y_test.shape}")
 
-X_train_processed, X_test_processed, y_train_processed, y_test_processed = preprocessing(X_train, X_test, y_train, y_test)
+X_train_processed, X_test_processed, y_train_processed, y_test_processed = train_preprocessing(X_train, X_test, y_train, y_test)
 print(f"Shape of X_train_processed: {X_train_processed.shape}, Shape of y_train_processed: {y_train_processed.shape}")
 print(f"Shape of X_test_processed: {X_test_processed.shape}, Shape of y_test_processed: {y_test_processed.shape}")
 

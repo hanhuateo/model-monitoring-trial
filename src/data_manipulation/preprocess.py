@@ -28,7 +28,7 @@ def split(df):
 
     return X_train, X_test, y_train, y_test
 
-def preprocessing(X_train, X_test, y_train, y_test):
+def train_preprocessing(X_train, X_test, y_train, y_test):
     # define categorical and numerical transformers
     categorical_transformer = Pipeline(steps=[
         # ('SimpleImputer', SimpleImputer(strategy='most_frequent')),
@@ -66,3 +66,20 @@ def preprocessing(X_train, X_test, y_train, y_test):
 
     return X_train_processed,  X_test_processed, y_train_processed, y_test_processed
 
+def test_preprocessing(X):
+    # define categorical and numerical transformers
+    categorical_transformer = Pipeline(steps=[
+        # ('SimpleImputer', SimpleImputer(strategy='most_frequent')),
+        ('encoder', OneHotEncoder(drop=None))
+    ])
+
+    numerical_transformer = Pipeline(steps=[
+        # ('knnImputer', KNNImputer(n_neighbors=3, weights="uniform")),
+        ('scaler', StandardScaler())
+    ])
+    
+    #  dispatch object columns to the categorical_transformer and remaining columns to numerical_transformer
+    preprocessor = ColumnTransformer(transformers=[
+        ('categorical', categorical_transformer, make_column_selector(dtype_include="category")),
+        ('numerical', numerical_transformer, make_column_selector(dtype_exclude="category"))
+    ])

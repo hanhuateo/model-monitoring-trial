@@ -17,8 +17,3 @@ def ordinal_encoding(df):
                                     'Travel_Frequently':3}
                  })
     return df
-
-df = pd.read_csv('../../data/raw/employee.csv')
-df = drop_columns(df)
-df = ordinal_encoding(df)
-df.to_csv('../../data/processed/cleaned_employee.csv')
