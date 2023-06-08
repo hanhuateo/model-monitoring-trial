@@ -14,8 +14,6 @@ from scipy.sparse import save_npz
 
 from numpy import savetxt, save
 
-from joblib import dump
-
 def split(df):
     X = df.drop(columns=['Attrition'])
     y = df['Attrition']
@@ -71,10 +69,10 @@ def train_preprocessing(X_train, X_test, y_train, y_test):
     else:
         save_npz('../data/processed/X_test_processed.npz', X_test_processed)
 
+    
     LE = LabelEncoder()
     y_train_processed = LE.fit_transform(y_train)
     print(f"Shape of y_train_processed after preprocessing: {y_train_processed.shape}")
-    save('../data/processed/y_train_processed.npy', )
 
     y_test_processed = LE.transform(y_test)
     print(f"Shape of y_test_processed after preprocessing: {y_test_processed.shape}")

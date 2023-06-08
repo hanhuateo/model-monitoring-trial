@@ -9,38 +9,16 @@ from data_manipulation.preprocess import *
 
 RF_clf = load('../data/models/RF_clf.joblib')
 reference = pd.read_csv('../data/split_data/train_dataset.csv')
-current = pd.read_csv('../data/split_data/test_dataset.csv')
+current = pd.read_csv('../data/split_data/test_dataset.csv').drop(columns='Attrition', inplace=True)
 
 # see if got drift between reference and current data
 # also run the current data through the random forest classifier and compare the
 # evaluation curves and performance metrics
 
-# report = Report(metrics=[])
-# report = setDataDriftPreset(report)
-# report.run(current_data=current, reference_data=reference)
-# report.save_html('./monitoring/reports/DataDriftReport.html')
+report = Report(metrics=[])
 
-# colName1 = 'DailyRate'
-# report = setColumnMetric(report, colName1)
-# report.run(current_data=current, reference_data=reference)
-# report.save_html('./monitoring/reports/ColumnMetricReport_{}.html'.format(colName1))
-# print(report.json)
-
-# colName2 = 'Department'
-# report = setColumnMetric(report, colName2)
-# report.run(current_data=current, reference_data=reference)
-# report.save_html('./monitoring/reports/ColumnMetricReport_{}.html'.format(colName2))
-
-# report = setTests(report)
-# report.run(current_data=current, reference_data=reference)
-# report.save_html('./monitoring/reports/TestsReport.html')
-# print(report.json)
-
-# report = setNoTargetTest(report)
-# report.run(current_data=current, reference_data=reference)
-# report.save_html('./monitoring/reports/NoTargetTestsReport.html')
-
-current = current.drop(columns='Attrition', index=False)
-current = drop_columns(current)
-current = ordinal_encoding(current)
-
+test = TestSuite(tests=[])
+test = setNoTargetTest(test)
+reference['Education'].astype(int)
+test.run(current_data=current, reference_data=reference)
+test.save_html('./monitoring/reports/NoTargetTestsReport.html')

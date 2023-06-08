@@ -39,8 +39,8 @@ def setTests(tests):
     ])
     return tests
 
-def setNoTargetTest(tests):
-    tests = TestSuite(tests=[
+def setNoTargetTest(suite):
+    suite = TestSuite(tests=[
         NoTargetPerformanceTestPreset(),
     ])
-    return tests
+    return suite
