@@ -81,3 +81,13 @@ def train_preprocessing(X_train, X_test, y_train, y_test):
     print(f"y_train before preprocessing: {LE.inverse_transform(y_train_processed)}") 
 
     return X_train_processed,  X_test_processed, y_train_processed, y_test_processed
+
+def test_preprocessing(X):
+    X_processed = preprocessor.transform(X)
+    print(f"Shape of X after preprocessing: {X_processed.shape}")
+    print('type of X_processed: {}'.format(type(X_processed).__name__))
+    if (type(X_processed).__name__ == 'ndarray'):
+        savetxt('../data/processed/X_processed.csv', X_processed, delimiter=',')
+    else:
+        save_npz('../data/processed/X_processed.npz', X_processed)
+    return X_processed
