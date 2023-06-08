@@ -34,24 +34,25 @@ def split(df):
 
     return X_train, X_test, y_train, y_test
 
+# define categorical and numerical transformers
+categorical_transformer = Pipeline(steps=[
+# ('SimpleImputer', SimpleImputer(strategy='most_frequent')),
+('encoder', OneHotEncoder(drop=None))
+])
+
+numerical_transformer = Pipeline(steps=[
+# ('knnImputer', KNNImputer(n_neighbors=3, weights="uniform")),
+('scaler', StandardScaler())
+])
+
+
+#  dispatch object columns to the categorical_transformer and remaining columns to numerical_transformer
+preprocessor = ColumnTransformer(transformers=[
+('categorical', categorical_transformer, make_column_selector(dtype_include="category")),
+('numerical', numerical_transformer, make_column_selector(dtype_exclude="category"))
+])
+
 def train_preprocessing(X_train, X_test, y_train, y_test):
-    # define categorical and numerical transformers
-    categorical_transformer = Pipeline(steps=[
-        # ('SimpleImputer', SimpleImputer(strategy='most_frequent')),
-        ('encoder', OneHotEncoder(drop=None))
-    ])
-
-    numerical_transformer = Pipeline(steps=[
-        # ('knnImputer', KNNImputer(n_neighbors=3, weights="uniform")),
-        ('scaler', StandardScaler())
-    ])
-
-
-    #  dispatch object columns to the categorical_transformer and remaining columns to numerical_transformer
-    preprocessor = ColumnTransformer(transformers=[
-        ('categorical', categorical_transformer, make_column_selector(dtype_include="category")),
-        ('numerical', numerical_transformer, make_column_selector(dtype_exclude="category"))
-    ])
 
     # using make_column_transformer
     X_train_processed = preprocessor.fit_transform(X_train)
@@ -70,7 +71,6 @@ def train_preprocessing(X_train, X_test, y_train, y_test):
     else:
         save_npz('../data/processed/X_test_processed.npz', X_test_processed)
 
-    dump(preprocessor, '../data/models/preprocessor.pkl')
     LE = LabelEncoder()
     y_train_processed = LE.fit_transform(y_train)
     print(f"Shape of y_train_processed after preprocessing: {y_train_processed.shape}")

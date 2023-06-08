@@ -43,3 +43,4 @@ current = pd.read_csv('../data/split_data/test_dataset.csv')
 current = current.drop(columns='Attrition', index=False)
 current = drop_columns(current)
 current = ordinal_encoding(current)
+
