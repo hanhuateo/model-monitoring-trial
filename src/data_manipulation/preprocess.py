@@ -14,6 +14,8 @@ from scipy.sparse import save_npz
 
 from numpy import savetxt, save
 
+import pandas as pd
+
 def split(df):
     X = df.drop(columns=['Attrition'])
     y = df['Attrition']
@@ -56,20 +58,18 @@ def train_preprocessing(X_train, X_test, y_train, y_test):
     X_train_processed = preprocessor.fit_transform(X_train)
     print(f"Shape of X_train_processed after preprocessing: {X_train_processed.shape}")
     print('type of X_train_processed : {}'.format(type(X_train_processed).__name__))
-    if (type(X_train_processed).__name__ == 'ndarray'):
-        savetxt('../data/processed/X_train_processed.csv', X_train_processed, delimiter=',')
-    else:
-        save_npz('../data/processed/X_train_processed.npz', X_train_processed)
+    savetxt('../data/processed/X_train_processed.csv', X_train_processed, delimiter=',')
 
     X_test_processed = preprocessor.transform(X_test)
     print(f"Shape of X_test_processed after preprocessing: {X_test_processed.shape}")
     print('type of X_test_processed : {}'.format(type(X_test_processed).__name__))
-    if (type(X_test_processed).__name__ == 'ndarray'):
-        savetxt('../data/processed/X_test_processed.csv', X_test_processed, delimiter=',')
-    else:
-        save_npz('../data/processed/X_test_processed.npz', X_test_processed)
+    savetxt('../data/processed/X_test_processed.csv', X_test_processed, delimiter=',')
 
-    
+    df1 = pd.read_csv('../data/processed/X_train_processed.csv')
+    df2 = pd.read_csv('../data/processed/X_test_processed.csv')
+    df3 = pd.concat([df1, df2], axis=0)
+    df3.to_csv('../data/processed/combined_X_train_test_processed.csv', index=False)
+
     LE = LabelEncoder()
     y_train_processed = LE.fit_transform(y_train)
     print(f"Shape of y_train_processed after preprocessing: {y_train_processed.shape}")

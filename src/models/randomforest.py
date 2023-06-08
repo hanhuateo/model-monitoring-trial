@@ -9,10 +9,10 @@ from sklearn.metrics import roc_curve, precision_recall_curve
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 from joblib import dump
-from warnings import simplefilter
-simplefilter(action='ignore', category=FutureWarning)
-import plotly
-import plotly.graph_objs as go
+from data_manipulation.cleaning import *
+from data_manipulation.understandings import *
+from data_manipulation.preprocess import *
+
 
 def performance_metrics(model, X, y, type):
 
@@ -144,3 +144,14 @@ def randomforestmodel(X_train_processed, y_train_processed):
     RF_clf.fit(X_train_processed, y_train_processed)
     dump(RF_clf, '../data/models/RF_clf.joblib')
     return RF_clf
+
+def train_model(df):
+    df = object_to_category(df)
+    df = drop_columns(df)
+    df = ordinal_encoding(df)
+    X_train, X_test, y_train, y_test = split(df)
+    X_train_processed,  X_test_processed, y_train_processed, y_test_processed = train_preprocessing(X_train, X_test, y_train, y_test)
+    RF_clf = randomforestmodel(X_train_processed, y_train_processed)
+    performance_metrics(RF_clf, X_train_processed, y_train_processed, "train")
+    performance_metrics(RF_clf, X_test_processed, y_test_processed, "test")
+    plot_evaluation_curves(RF_clf, X_train_processed, X_test_processed, y_train_processed, y_test_processed)

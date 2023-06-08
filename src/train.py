@@ -1,10 +1,8 @@
 import pandas as pd
 # from data_manipulation import cleaning, preprocess, understandings
-from data_manipulation.cleaning import *
-from data_manipulation.understandings import *
-from data_manipulation.preprocess import *
 from models.randomforest import *
-from sklearn.model_selection import train_test_split
+
+# from sklearn.model_selection import train_test_split
 
 # Read the CSV dataset into a pandas DataFrame
 # df = pd.read_csv("./data/raw/employee.csv")
@@ -15,3 +13,6 @@ from sklearn.model_selection import train_test_split
 # # Write the training and testing sets into separate CSV files
 # train_df.to_csv('./data/split_data/train_dataset.csv', index=False)
 # test_df.to_csv('./data/split_data/test_dataset.csv', index=False)
+
+df = pd.read_csv("./data/split_data/train_dataset.csv")
+train_model(df)
