@@ -14,5 +14,5 @@ from models.randomforest import *
 # train_df.to_csv('./data/split_data/train_dataset.csv', index=False)
 # test_df.to_csv('./data/split_data/test_dataset.csv', index=False)
 
-df = pd.read_csv("./data/split_data/train_dataset.csv")
+df = pd.read_csv("../data/split_data/train_dataset.csv")
 train_model(df)
