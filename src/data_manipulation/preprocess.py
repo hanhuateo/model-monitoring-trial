@@ -16,6 +16,8 @@ from numpy import savetxt, save
 
 import pandas as pd
 
+from joblib import dump
+
 def split(df):
     X = df.drop(columns=['Attrition'])
     y = df['Attrition']
@@ -34,25 +36,27 @@ def split(df):
 
     return X_train, X_test, y_train, y_test
 
-# define categorical and numerical transformers
-categorical_transformer = Pipeline(steps=[
-# ('SimpleImputer', SimpleImputer(strategy='most_frequent')),
-('encoder', OneHotEncoder(drop=None))
-])
 
-numerical_transformer = Pipeline(steps=[
-# ('knnImputer', KNNImputer(n_neighbors=3, weights="uniform")),
-('scaler', StandardScaler())
-])
-
-
-#  dispatch object columns to the categorical_transformer and remaining columns to numerical_transformer
-preprocessor = ColumnTransformer(transformers=[
-('categorical', categorical_transformer, make_column_selector(dtype_include="category")),
-('numerical', numerical_transformer, make_column_selector(dtype_exclude="category"))
-])
 
 def train_preprocessing(X_train, X_test, y_train, y_test):
+
+    # define categorical and numerical transformers
+    categorical_transformer = Pipeline(steps=[
+    # ('SimpleImputer', SimpleImputer(strategy='most_frequent')),
+    ('encoder', OneHotEncoder(drop=None))
+    ])
+
+    numerical_transformer = Pipeline(steps=[
+    # ('knnImputer', KNNImputer(n_neighbors=3, weights="uniform")),
+    ('scaler', StandardScaler())
+    ])
+
+
+    #  dispatch object columns to the categorical_transformer and remaining columns to numerical_transformer
+    preprocessor = ColumnTransformer(transformers=[
+    ('categorical', categorical_transformer, make_column_selector(dtype_include="category")),
+    ('numerical', numerical_transformer, make_column_selector(dtype_exclude="category"))
+    ])
 
     # using make_column_transformer
     X_train_processed = preprocessor.fit_transform(X_train)
@@ -70,6 +74,8 @@ def train_preprocessing(X_train, X_test, y_train, y_test):
     df3 = pd.concat([df1, df2], axis=0)
     df3.to_csv('../data/processed/combined_X_train_test_processed.csv', index=False)
 
+    dump(preprocessor, '../data/preprocessor/column_transformer.pkl')
+    
     LE = LabelEncoder()
     y_train_processed = LE.fit_transform(y_train)
     print(f"Shape of y_train_processed after preprocessing: {y_train_processed.shape}")
@@ -82,12 +88,12 @@ def train_preprocessing(X_train, X_test, y_train, y_test):
 
     return X_train_processed,  X_test_processed, y_train_processed, y_test_processed
 
-def test_preprocessing(X):
+def test_preprocessing(X, preprocessor):
     X_processed = preprocessor.transform(X)
     print(f"Shape of X after preprocessing: {X_processed.shape}")
     print('type of X_processed: {}'.format(type(X_processed).__name__))
     if (type(X_processed).__name__ == 'ndarray'):
-        savetxt('../data/processed/X_processed.csv', X_processed, delimiter=',')
+        savetxt('../data/processed/current_X_processed.csv', X_processed, delimiter=',')
     else:
-        save_npz('../data/processed/X_processed.npz', X_processed)
+        save_npz('../data/processed/current_X_processed.npz', X_processed)
     return X_processed
