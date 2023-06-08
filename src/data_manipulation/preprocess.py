@@ -64,4 +64,5 @@ def preprocessing(X_train, X_test, y_train, y_test):
     print(f"y_train after preprocessing: {y_train_processed}")
     print(f"y_train before preprocessing: {LE.inverse_transform(y_train_processed)}") 
 
-    return X_train_processed, y_train_processed, X_test_processed, y_test_processed
+    return X_train_processed,  X_test_processed, y_train_processed, y_test_processed
+
