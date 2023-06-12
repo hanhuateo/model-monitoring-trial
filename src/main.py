@@ -36,24 +36,22 @@ print(current.head())
 # do preprocessing on features
 X_processed = test_preprocessing(current, column_transformer)
 print("X_processed is : {}".format(X_processed))
-print(f"Shape of X_processed is {X_processed.shape}")
 
 # obtain the predictions
 y_prediction = RF_clf.predict(X_processed)
-# y_pred_prob = RF_clf.predict_proba(X_processed)[:,1]
 print("y_prediction is : {}".format(y_prediction))
 print(f"Shape of y_prediction is {y_prediction.shape}")
 
+y_pred_prob = RF_clf.predict_proba(X_processed)[:,1]
+
 # do preprocessing on label
 y_true_processed = y_preprocessing(y_true, label_encoder)
-y_prediction_processed = y_preprocessing(y_prediction, label_encoder)
 
-
-# accuracy = accuracy_score(y_true_processed, y_prediction_processed)
-# f1 = f1_score(y_true_processed, y_prediction_processed)
-# roc_auc = roc_auc_score(y_true, y_pred_prob)
-# average_precision = average_precision_score(y_true, y_pred_prob)
-# print('accuracy : {}'.format(accuracy))
-# print('f1 : {}'.format(f1))
-# print('roc_auc : {}'.format(roc_auc))
-# print('average precision score : {}'.format(average_precision))
+accuracy = accuracy_score(y_true_processed, y_prediction)
+f1 = f1_score(y_true_processed, y_prediction)
+roc_auc = roc_auc_score(y_true_processed, y_pred_prob)
+average_precision = average_precision_score(y_true_processed, y_pred_prob)
+print('accuracy : {}'.format(accuracy))
+print('f1 : {}'.format(f1))
+print('roc_auc : {}'.format(roc_auc))
+print('average precision score : {}'.format(average_precision))

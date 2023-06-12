@@ -131,4 +131,5 @@ def test_preprocessing(X, preprocessor):
 def y_preprocessing(y, label_encoder):
     y_processed = label_encoder.transform(y)
     print("Shape of y after preprocessing : {}".format(y_processed.shape))
+    print('type of y_processed: {}'.format(type(y_processed).__name__))
     return y_processed
