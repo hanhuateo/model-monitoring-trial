@@ -36,29 +36,17 @@ def split(df):
     X_test.reset_index(drop=True, inplace=True)
     y_test.reset_index(drop=True, inplace=True)
 
-    # with open('../data/split_data/X_train.csv', 'w', newline='') as file:
-    #     writer = csv.writer(file)
-    #     writer.writerow(X_train)
+    print("X_train is : {}".format(X_train)) 
+    print("X_train type is : {}".format(type(X_train))) # dataframe
+    print("X_test is : {}, {}".format(X_test, type(X_test))) # dataframe
+    print("y_train is : {}, {}".format(y_train, type(y_train))) # series
+    print("y_test is : {}, {}".format(y_test, type(y_test))) # series
 
-    # with open('../data/split_data/X_test.csv', 'w', newline='') as file:
-    #     writer = csv.writer(file)
-    #     writer.writerow(X_test)
+    X_combined = pd.concat([X_train, X_test], axis=0)
+    X_combined.to_csv('../data/split_data/X_combined.csv', index=False)
 
-    # with open('../data/split_data/y_train.csv', 'w', newline='') as file:
-    #     writer = csv.writer(file)
-    #     writer.writerow(y_train)
-
-    # with open('../data/split_data/y_test.csv', 'w', newline='') as file:
-    #     writer = csv.writer(file)
-    #     writer.writerow(y_test)
-
-    # df1 = pd.read_csv('../data/split_data/y_train.csv')
-    # print("y_train shape is : {}".format(df1.shape))
-    # df2 = pd.read_csv('../data/split_data/y_test.csv')
-    # print("y_test shape is : {}".format(df2.shape))
-    # df3 = pd.concat([df1, df2], axis=0)     
-    # df3.to_csv('../data/split_data/y_combined.csv', index=False)
-    # print("y_combined shape is : {}".format(df3.shape))
+    y_combined = pd.concat([y_train, y_test], axis=0)
+    y_combined.to_csv('../data/split_data/y_combined.csv', index=False)
     
     return X_train, X_test, y_train, y_test
 
@@ -88,28 +76,33 @@ def train_preprocessing(X_train, X_test, y_train, y_test):
     X_train_processed = preprocessor.fit_transform(X_train)
     print(f"Shape of X_train_processed after preprocessing: {X_train_processed.shape}")
     print('type of X_train_processed : {}'.format(type(X_train_processed).__name__))
-    # savetxt('../data/processed/X_train_processed.csv', X_train_processed, delimiter=',')
+    savetxt('../data/processed/X_train_processed.csv', X_train_processed, delimiter=',')
 
     X_test_processed = preprocessor.transform(X_test)
     print(f"Shape of X_test_processed after preprocessing: {X_test_processed.shape}")
     print('type of X_test_processed : {}'.format(type(X_test_processed).__name__))
-    # savetxt('../data/processed/X_test_processed.csv', X_test_processed, delimiter=',')
+    savetxt('../data/processed/X_test_processed.csv', X_test_processed, delimiter=',')
 
-    # df1 = pd.read_csv('../data/processed/X_train_processed.csv')
-    # df2 = pd.read_csv('../data/processed/X_test_processed.csv')
-    # df3 = pd.concat([df1, df2], axis=0)
-    # df3.to_csv('../data/processed/combined_X_train_test_processed.csv', index=False)
+    df1 = pd.read_csv('../data/processed/X_train_processed.csv')
+    df2 = pd.read_csv('../data/processed/X_test_processed.csv')
+    X_combined_processed = pd.concat([df1, df2], axis=0)
+    X_combined_processed.to_csv('../data/processed/X_combined_processed.csv', index=False)
 
     dump(preprocessor, '../data/preprocessor/column_transformer.pkl')
 
     LE = LabelEncoder()
     y_train_processed = LE.fit_transform(y_train)
     print(f"Shape of y_train_processed after preprocessing: {y_train_processed.shape}")
-    # savetxt('../data/processed/y_train_processed.csv', y_train_processed, delimiter=',')
+    savetxt('../data/processed/y_train_processed.csv', y_train_processed, delimiter=',')
 
     y_test_processed = LE.transform(y_test)
     print(f"Shape of y_test_processed after preprocessing: {y_test_processed.shape}")
-    # savetxt('../data/processed/y_test_processed.csv', y_test_processed, delimiter=',')
+    savetxt('../data/processed/y_test_processed.csv', y_test_processed, delimiter=',')
+
+    df3 = pd.read_csv('../data/processed/y_train_processed.csv')
+    df4 = pd.read_csv('../data/processed/y_test_processed.csv')
+    y_combined_processed = pd.concat([df3, df4], axis=0)
+    y_combined_processed.to_csv('../data/processed/y_combined_processed.csv', index=False)
 
     dump(LE, '../data/preprocessor/label_encoder.pkl')
 
@@ -122,14 +115,18 @@ def test_preprocessing(X, preprocessor):
     X_processed = preprocessor.transform(X)
     print(f"Shape of X after preprocessing: {X_processed.shape}")
     print('type of X_processed: {}'.format(type(X_processed).__name__))
-    # if (type(X_processed).__name__ == 'ndarray'):
-        # savetxt('../data/processed/current_X_processed.csv', X_processed, delimiter=',')
-    # else:
-        # save_npz('../data/processed/current_X_processed.npz', X_processed)
+    if (type(X_processed).__name__ == 'ndarray'):
+        savetxt('../data/processed/X_current_processed.csv', X_processed, delimiter=',')
+    else:
+        save_npz('../data/processed/X_current_processed.npz', X_processed)
     return X_processed
 
 def y_preprocessing(y, label_encoder):
     y_processed = label_encoder.transform(y)
     print("Shape of y after preprocessing : {}".format(y_processed.shape))
     print('type of y_processed: {}'.format(type(y_processed).__name__))
+    if (type(y_processed).__name__ == 'ndarray'):
+        savetxt('../data/processed/y_current_processed.csv', y_processed, delimiter=',')
+    else:
+        save_npz('../data/processed/y_current_processed.csv', y_processed)
     return y_processed

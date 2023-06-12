@@ -7,6 +7,7 @@ from data_manipulation.cleaning import *
 from data_manipulation.understandings import *
 from data_manipulation.preprocess import *
 from joblib import load
+from numpy import savetxt
 # metrics
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, average_precision_score
@@ -32,6 +33,8 @@ print("y_true is : {}".format(y_true))
 print(f"Shape of y_true is {y_true.shape}")
 current.drop(columns='Attrition', inplace=True)
 print(current.head())
+current.to_csv('../data/split_data/X_current.csv')
+y_true.to_csv('../data/split_data/y_current.csv')
 
 # do preprocessing on features
 X_processed = test_preprocessing(current, column_transformer)
