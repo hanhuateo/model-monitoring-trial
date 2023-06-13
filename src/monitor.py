@@ -20,6 +20,7 @@ column_mapping = ColumnMapping()
 column_mapping.target = 'Attrition'
 column_mapping.prediction = 'Prediction'
 column_mapping.id = None
+column_mapping.task = 'classification'
 column_mapping.categorical_features = ['Department',
                                        'EducationField',
                                        'Gender',
