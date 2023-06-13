@@ -33,8 +33,8 @@ print("y_true is : {}".format(y_true))
 print(f"Shape of y_true is {y_true.shape}")
 current.drop(columns='Attrition', inplace=True)
 print(current.head())
-current.to_csv('../data/split_data/X_current.csv')
-y_true.to_csv('../data/split_data/y_current.csv')
+current.to_csv('../data/split_data/X_current.csv', index=False)
+y_true.to_csv('../data/split_data/y_current.csv', index=False)
 
 # do preprocessing on features
 X_processed = test_preprocessing(current, column_transformer)

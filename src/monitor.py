@@ -16,5 +16,6 @@ y_current_processed = pd.read_csv('../data/processed/y_current_processed.csv')
 data_drift_report = Report(metrics=[
     DataDriftPreset(),
 ])
+
 data_drift_report.run(reference_data=X_combined, current_data=X_current)
-data_drift_report.save_html('./monitoring/reports/features_data_drift_report.html')
+data_drift_report.save_html('./monitoring/reports/data_drift_report.html')
