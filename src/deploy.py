@@ -44,6 +44,7 @@ print("X_processed is : {}".format(X_processed))
 y_prediction = RF_clf.predict(X_processed)
 print("y_prediction is : {}".format(y_prediction))
 print(f"Shape of y_prediction is {y_prediction.shape}")
+savetxt('../data/predicted/y_prediction.csv', y_prediction, delimiter=',')
 
 y_pred_prob = RF_clf.predict_proba(X_processed)[:,1]
 
