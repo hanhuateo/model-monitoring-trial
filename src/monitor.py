@@ -51,35 +51,31 @@ column_mapping.numerical_features = ['Age',
                                      'YearsSinceLastPromotion',
                                      'YearsWithCurrManager']
 
-data_drift_report = Report(metrics=[
-    # DataDriftPreset(cat_stattest='jensenshannon', num_stattest='ks'),
-    # DataDriftPreset(cat_stattest='jensenshannon', num_stattest='jensenshannon')
-    DataDriftPreset(),
-])
+# data_drift_report = Report(metrics=[
+#     # DataDriftPreset(cat_stattest='jensenshannon', num_stattest='ks'),
+#     # DataDriftPreset(cat_stattest='jensenshannon', num_stattest='jensenshannon')
+#     DataDriftPreset(),
+# ])
+# data_drift_report.run(reference_data=X_combined, current_data=X_current)
+# data_drift_report.save_html('./monitoring/reports/data_drift_report.html')
 
-data_drift_report.run(reference_data=X_combined, current_data=X_current)
-data_drift_report.save_html('./monitoring/reports/data_drift_report.html')
+# data_drift_test_suite = TestSuite(tests=[
+#     DataDriftTestPreset(),
+# ])
+# data_drift_test_suite.run(reference_data=X_combined, current_data=X_current)
+# data_drift_test_suite.save_html('./monitoring/reports/data_drift_test_suite.html')
 
-data_drift_test_suite = TestSuite(tests=[
-    DataDriftTestPreset(),
-])
+# data_quality_report = Report(metrics=[
+#     DataQualityPreset(),
+# ])
+# data_quality_report.run(reference_data=X_combined, current_data=X_current)
+# data_quality_report.save_html('./monitoring/reports/data_quality_report.html')
 
-data_drift_test_suite.run(reference_data=X_combined, current_data=X_current)
-data_drift_test_suite.save_html('./monitoring/reports/data_drift_test_suite.html')
-
-data_quality_report = Report(metrics=[
-    DataQualityPreset(),
-])
-
-data_quality_report.run(reference_data=X_combined, current_data=X_current)
-data_quality_report.save_html('./monitoring/reports/data_quality_report.html')
-
-data_quality_test_suite = TestSuite(tests=[
-    DataQualityTestPreset(),
-])
-
-data_quality_test_suite.run(reference_data=X_combined, current_data=X_current)
-data_quality_test_suite.save_html('./monitoring/reports/data_quality_test_suite.html')
+# data_quality_test_suite = TestSuite(tests=[
+#     DataQualityTestPreset(),
+# ])
+# data_quality_test_suite.run(reference_data=X_combined, current_data=X_current)
+# data_quality_test_suite.save_html('./monitoring/reports/data_quality_test_suite.html')
 
 num_target_drift_report = Report(metrics=[
     TargetDriftPreset(),
