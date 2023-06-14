@@ -16,6 +16,8 @@ y_current_processed = pd.read_csv('../data/processed/y_current_processed.csv')
 
 y_prediction = pd.read_csv('../data/predicted/y_prediction.csv')
 
+train_dataset = pd.read_csv('../data/split_data/train_dataset.csv')
+
 column_mapping = ColumnMapping()
 column_mapping.target = 'Attrition'
 column_mapping.prediction = 'Prediction'
@@ -52,16 +54,16 @@ column_mapping.numerical_features = ['Age',
                                      'YearsSinceLastPromotion',
                                      'YearsWithCurrManager']
 
-# data_drift_report = Report(metrics=[
-#     # DataDriftPreset(),
-#     DatasetDriftMetric(drift_share=0.7, stattest='psi', stattest_threshold=0.3),
-#     DataDriftTable(stattest='psi', stattest_threshold=0.3),
-#     ColumnDriftMetric(column_name='Age'),
-#     # TextDescriptorsDriftMetric(column_name=''),
-#     # EmbeddingsDriftMetric(embeddings_name=''),
-# ])
-# data_drift_report.run(reference_data=X_combined, current_data=X_current)
-# data_drift_report.save_html('./monitoring/reports/data_drift_report.html')
+data_drift_report = Report(metrics=[
+    # DataDriftPreset(),
+    DatasetDriftMetric(drift_share=0.7, stattest='z', stattest_threshold=0.3),
+    DataDriftTable(stattest='psi', stattest_threshold=0.3),
+    ColumnDriftMetric(column_name='Age'),
+    # TextDescriptorsDriftMetric(column_name=''),
+    # EmbeddingsDriftMetric(embeddings_name=''),
+])
+data_drift_report.run(reference_data=X_combined, current_data=X_current)
+data_drift_report.save_html('./monitoring/reports/data_drift_report.html')
 
 # data_drift_test_suite = TestSuite(tests=[
 #     # DataDriftTestPreset(),
@@ -89,5 +91,5 @@ column_mapping.numerical_features = ['Age',
 # num_target_drift_report = Report(metrics=[
 #     TargetDriftPreset(),
 # ])
-# num_target_drift_report.run(reference_data=y_combined, current_data=y_current)
+# num_target_drift_report.run(reference_data=train_dataset, current_data=X_current)
 # num_target_drift_report.save_html('./monitoring/reports/num_target_drift_report.html')
