@@ -53,17 +53,26 @@ column_mapping.numerical_features = ['Age',
                                      'YearsWithCurrManager']
 
 # data_drift_report = Report(metrics=[
-#     DataDriftPreset(),
+#     # DataDriftPreset(),
+#     DatasetDriftMetric(drift_share=0.7, stattest='psi', stattest_threshold=0.3),
+#     DataDriftTable(stattest='psi', stattest_threshold=0.3),
 #     ColumnDriftMetric(column_name='Age'),
+#     # TextDescriptorsDriftMetric(column_name=''),
+#     # EmbeddingsDriftMetric(embeddings_name=''),
 # ])
 # data_drift_report.run(reference_data=X_combined, current_data=X_current)
 # data_drift_report.save_html('./monitoring/reports/data_drift_report.html')
 
-data_drift_test_suite = TestSuite(tests=[
-    DataDriftTestPreset(),
-])
-data_drift_test_suite.run(reference_data=X_combined, current_data=X_current)
-data_drift_test_suite.save_html('./monitoring/reports/data_drift_test_suite.html')
+# data_drift_test_suite = TestSuite(tests=[
+#     # DataDriftTestPreset(),
+#     TestShareOfDriftedColumns(),
+#     TestColumnDrift(column_name='Age'),
+#     TestNumberOfDriftedColumns(),
+#     # TestEmbeddingsDrift(embeddings_name=''),
+# ])
+# data_drift_test_suite.run(reference_data=X_combined, current_data=X_current)
+# data_drift_test_suite.save_html('./monitoring/reports/data_drift_test_suite.html')
+# data_drift_test_suite.save_json('./monitoring/reports/data_drift_test_suite.json')
 
 # data_quality_report = Report(metrics=[
 #     DataQualityPreset(),
