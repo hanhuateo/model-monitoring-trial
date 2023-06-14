@@ -8,9 +8,9 @@ from sklearn.metrics import roc_curve, precision_recall_curve
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 from joblib import dump
-from data_manipulation.cleaning import *
-from data_manipulation.understandings import *
-from data_manipulation.preprocess import *
+from data_manipulation.cleaning import drop_columns, ordinal_encoding
+from data_manipulation.understandings import object_to_category
+from data_manipulation.preprocess import train_preprocessing, split
 
 
 def performance_metrics(model, X, y, type):
