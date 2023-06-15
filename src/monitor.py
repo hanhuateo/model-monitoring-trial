@@ -56,8 +56,8 @@ column_mapping.numerical_features = ['Age',
 
 data_drift_report = Report(metrics=[
     # DataDriftPreset(),
-    DatasetDriftMetric(drift_share=0.7, stattest='z', stattest_threshold=0.3),
-    DataDriftTable(stattest='psi', stattest_threshold=0.3),
+    DatasetDriftMetric(drift_share=0.5),
+    DataDriftTable(num_stattest='ks', num_stattest_threshold=0.05, cat_stattest='chisquare', cat_stattest_threshold=0.05),
     ColumnDriftMetric(column_name='Age'),
     # TextDescriptorsDriftMetric(column_name=''),
     # EmbeddingsDriftMetric(embeddings_name=''),
