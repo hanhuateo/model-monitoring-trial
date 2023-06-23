@@ -60,7 +60,10 @@ data_drift_report = Report(metrics=[
     # DatasetDriftMetric(),
     # Parameters for DataDriftTable: stattest, stattest_threshold, cat_stattest, cat_stattest_threshold,
     # num_stattest, num_stattest_threshold, per_column_stattest, per_column_stattest_threshold
-    DataDriftTable(per_column_stattest={"Age": "ks"}, per_column_stattest_threshold={"Age": 0.3}),
+    DataDriftTable(per_column_stattest={"Age":"ks",
+                                        "BusinessTravel":"chisquare"}, 
+                   per_column_stattest_threshold={"Age": 0.3,
+                                                  "BusinessTravel":0.2}),
     # Parameters for ColumnDriftMetric: 
     ColumnDriftMetric(column_name='Age'),
     # TextDescriptorsDriftMetric(column_name=''),
