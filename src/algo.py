@@ -1,4 +1,5 @@
 import pandas as pd
+from scipy import stats
 def data_type_algo(df):
     list_column_names = list(df.columns)
     numerical_list = []
@@ -17,3 +18,27 @@ def data_type_algo(df):
             continue
     return numerical_list, nominal_list, ordinal_list
     
+def categorical_stat_test_algo(df, data_type_list, num_of_rows, per_column_dictionary):
+    if (num_of_rows <= 1000):
+        for col in data_type_list:
+            if df[col].nunique > 2:
+                per_column_dictionary.update({col: 'chisquare'})
+            else:
+                per_column_dictionary.update({col: 'z'})
+    else:
+        for col in data_type_list:
+            per_column_dictionary.update({col: 'jensenshannon'}) # can be JS or KL 
+    
+    return per_column_dictionary
+
+def numerical_stat_test_algo(df, data_type_list, num_of_rows, per_column_dictionary):
+    if (num_of_rows <= 1000):
+        for col in data_type_list:
+            per_column_dictionary.update({col:'ks'})
+    else:
+        for col in data_type_list:
+            res = stats.shapiro(df[col])
+            if (res.statistic > 0.7):
+                per_column_dictionary.update({col:'t_test'})
+            else:
+                per_column_dictionary.update({col:'wasserstein'}) # can be cramer, mann-whitney, wasser, JS, KL 
