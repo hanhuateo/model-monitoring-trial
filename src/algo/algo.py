@@ -37,7 +37,10 @@ def numerical_stat_test_algo(df, data_type_list, num_of_rows, per_column_diction
             per_column_dictionary.update({col:'ks'})
     else:
         for col in data_type_list:
-            res = stats.shapiro(df[col])
+            if (num_of_rows < 5000):
+                res = stats.shapiro(df[col])
+            else:
+                res = stats.anderson(df[col])
             if (res.statistic > 0.7):
                 per_column_dictionary.update({col:'t_test'})
             else:
