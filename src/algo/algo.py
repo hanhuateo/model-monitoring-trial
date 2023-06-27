@@ -7,22 +7,22 @@ def data_type_algo(df):
     nominal_list = []
     ordinal_list = []
     for col in list_column_names:
-        print("column name is : {}".format(col))
-        print("Number of Unique Value for {} is : {}".format(col, df[col].nunique()))
+        # print("column name is : {}".format(col))
+        # print("Number of Unique Value for {} is : {}".format(col, df[col].nunique()))
         # print("Column dtype is : {}".format(df[col].dtype))
         # if df[col].dtype == "int64":
         #     df[col].astype(int)
         # first if statement to determine ordinal column type
         if ((df[col].dtype in [np.int64,float]) and (df[col].nunique() <= 5)):
-            print("Inside Ordinal")
+            # print("Inside Ordinal")
             ordinal_list.append(col)
             continue
         if ((df[col].dtype in [np.int64,float]) and (df[col].nunique())) > 5:
-            print("Inside Numerical")
+            # print("Inside Numerical")
             numerical_list.append(col)
             continue
         if df[col].dtype in [object, str, 'category']:
-            print("Inside Nominal")
+            # print("Inside Nominal")
             nominal_list.append(col)
             continue
     return numerical_list, nominal_list, ordinal_list
