@@ -41,16 +41,26 @@ def categorical_stat_test_algo(df, data_type_list, num_of_rows, per_column_dicti
     return per_column_dictionary
 
 def numerical_stat_test_algo(df, data_type_list, num_of_rows, per_column_dictionary):
+    # print("inside numerical stat test algo")
     if (num_of_rows <= 1000):
+        # print("inside first if statement")
         for col in data_type_list:
             per_column_dictionary.update({col:'ks'})
     else:
+        # print("inside first else statement")
         for col in data_type_list:
+            res = 0
             if (num_of_rows < 5000):
+                # print("inside second if statement")
                 res = stats.shapiro(df[col])
             else:
+                # print("inside second else statement")
                 res = stats.anderson(df[col])
+
             if (res.statistic > 0.7):
+                # print("inside third if statement")
                 per_column_dictionary.update({col:'t_test'})
             else:
+                # print("intside third else statement")
                 per_column_dictionary.update({col:'wasserstein'}) # can be cramer, mann-whitney, wasser, JS, KL 
+    return per_column_dictionary

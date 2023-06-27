@@ -1,4 +1,4 @@
-from monitoring.evidently import *
+from monitoring.evidently import DataDriftTable, Report
 import pandas as pd
 from evidently import ColumnMapping
 from algo.algo import data_type_algo, categorical_stat_test_algo, numerical_stat_test_algo
@@ -66,7 +66,7 @@ data_drift_report = Report(metrics=[
                    per_column_stattest_threshold={"Age": 0.3,
                                                   "BusinessTravel":0.2}),
     # Parameters for ColumnDriftMetric: 
-    ColumnDriftMetric(column_name='Age'),
+    # ColumnDriftMetric(column_name='Age'),
     # TextDescriptorsDriftMetric(column_name=''),
     # EmbeddingsDriftMetric(embeddings_name=''),
 ])
