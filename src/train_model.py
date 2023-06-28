@@ -17,19 +17,22 @@ from joblib import dump
 
 # this part is to split the original dataset into a reference dataset (X_train) and an unseen dataset (X_test)
 # will not be used again after first time running
-"""
+
 df = pd.read_csv("../data/raw/employee.csv")
 X_train, X_test = train_test_split(df, test_size=0.5, random_state=42)
+print(X_train)
+print(X_test)
 X_train.reset_index(drop=True, inplace=True)
 X_test.reset_index(drop=True, inplace=True)
+print(X_train)
+print(X_test)
 X_train.to_csv("../data/split_data/employee_train.csv")
 X_test.to_csv("../data/split_data/employee.test.csv")
-"""
 
 # this part is to go through the standard data science pipeline to train the model
 # will not be used again after first time running
 # read dataset
-
+"""
 df = pd.read_csv("../data/split_data/employee_train.csv")
 
 # data cleaning
@@ -42,12 +45,14 @@ df = df.replace({'BusinessTravel': {'Non-Travel':1,
 # data understanding
 feature_names = df.drop(columns='Attrition').columns.to_list()
 print(f"feature names are : {feature_names}")
+# feature names are : ['Unnamed: 0', 'Age', 'BusinessTravel', 'DailyRate', 'Department', 'DistanceFromHome', 'Education', 'EducationField', 'EnvironmentSatisfaction', 'Gender', 'HourlyRate', 'JobInvolvement', 'JobLevel', 'JobRole', 'JobSatisfaction', 'MaritalStatus', 'MonthlyIncome', 'MonthlyRate', 'NumCompaniesWorked', 'OverTime', 'PercentSalaryHike', 'PerformanceRating', 'RelationshipSatisfaction', 'StockOptionLevel', 'TotalWorkingYears', 'TrainingTimesLastYear', 'WorkLifeBalance', 'YearsAtCompany', 'YearsInCurrentRole', 'YearsSinceLastPromotion', 'YearsWithCurrManager'] 
 
 # Categorical features
 # Nominal
 nominal_features = df.drop(columns=['Attrition']).select_dtypes(include=['object']).columns.tolist()
 print(f"Nominal features are : {nominal_features}")
 df[nominal_features] = df[nominal_features].astype('category')
+# Nominal features are : ['Department', 'EducationField', 'Gender', 'JobRole', 'MaritalStatus', 'OverTime']
 
 # Ordinal
 ordinal_features_mapping = {'BusinessTravel': {1: 'Non-Travel', 2: 'Travel_Rarely', 3: 'Travel_Frequently'},
@@ -63,11 +68,12 @@ ordinal_features_mapping = {'BusinessTravel': {1: 'Non-Travel', 2: 'Travel_Rarel
                             }
 ordinal_features = list(ordinal_features_mapping.keys())
 print(f"Ordinal features are : {ordinal_features}")
+# Ordinal features are : ['BusinessTravel', 'Education', 'EnvironmentSatisfaction', 'JobInvolvement', 'JobLevel', 'JobSatisfaction', 'PerformanceRating', 'RelationshipSatisfaction', 'StockOptionLevel', 'WorkLifeBalance']
 
 # Numerical features
 numerical_features = [feature for feature in feature_names if feature not in nominal_features + ordinal_features]
 print(f"Numerical features are : {numerical_features}")
-
+# Numerical features are : ['Unnamed: 0', 'Age', 'DailyRate', 'DistanceFromHome', 'HourlyRate', 'MonthlyIncome', 'MonthlyRate', 'NumCompaniesWorked', 'PercentSalaryHike', 'TotalWorkingYears', 'TrainingTimesLastYear', 'YearsAtCompany', 'YearsInCurrentRole', 'YearsSinceLastPromotion', 'YearsWithCurrManager']
 # Skipped EDA
 
 # Data Preprocessing
@@ -167,3 +173,4 @@ test_roc_auc = roc_auc_score(y_test_processed, y_test_pred_prob)
 test_average_precision = average_precision_score(y_test_processed, y_test_pred_prob)
 print(f"Test metrics are: accuracy = {test_accuracy}, f1 = {test_f1}, roc_auc = {test_roc_auc}, average precision = {test_average_precision}")
 # Test metrics are: accuracy = 0.8369565217391305, f1 = 0.4444444444444444, roc_auc = 0.7746337547662051, average precision = 0.5201777198978276
+"""

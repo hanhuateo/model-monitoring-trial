@@ -16,7 +16,12 @@ class ModelMonitoring():
         return numerical_list
 
     def get_categorical_columns(self, df):
-        pass
+        list_column_names = list(df.columns)
+        categorical_list = []
+        for col in list_column_names:
+            if col not in self.numerical_columns:
+                categorical_list.append(col)
+        return categorical_list
 
     def feature_drift(self, df):
         self.numerical_columns = self.get_numerical_columns(df)
