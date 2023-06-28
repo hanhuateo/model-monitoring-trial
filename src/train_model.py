@@ -1,31 +1,22 @@
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer, make_column_selector
 
-from sklearn.impute import KNNImputer
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, LabelEncoder
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+from sklearn.preprocessing import StandardScaler
 
-from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import validation_curve
 
-from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, average_precision_score
-from sklearn.metrics import roc_curve, precision_recall_curve
 
-from joblib import dump, load
+from joblib import dump
 
 # this part is to split the original dataset into a reference dataset (X_train) and an unseen dataset (X_test)
+# will not be used again after first time running
 """
 df = pd.read_csv("../data/raw/employee.csv")
 X_train, X_test = train_test_split(df, test_size=0.5, random_state=42)
@@ -36,10 +27,9 @@ X_test.to_csv("../data/split_data/employee.test.csv")
 """
 
 # this part is to go through the standard data science pipeline to train the model
-# and also to fit in the evidently scripts that has been written for 
-# feature drift and prediction drift
-
+# will not be used again after first time running
 # read dataset
+
 df = pd.read_csv("../data/split_data/employee_train.csv")
 
 # data cleaning
@@ -159,3 +149,21 @@ RF_clf = RandomForestClassifier(**RF_search.best_params_, class_weight='balanced
 RF_clf.fit(X_train_processed, y_train_processed)
 
 dump(RF_clf, './model/RF_clf.joblib')
+
+y_train_pred = RF_clf.predict(X_train_processed)
+y_train_pred_prob = RF_clf.predict_proba(X_train_processed)[:, 1]
+train_accuracy = accuracy_score(y_train_processed, y_train_pred)
+train_f1  = f1_score(y_train_processed, y_train_pred)
+train_roc_auc = roc_auc_score(y_train_processed, y_train_pred_prob)
+train_averaege_precision = average_precision_score(y_train_processed, y_train_pred_prob)
+print(f"Train metrics are: accuracy = {train_accuracy}, f1 = {train_f1}, roc_auc = {train_roc_auc}, average precision = {train_averaege_precision}")
+# Train metrics are: accuracy = 0.9927404718693285, f1 = 0.9803921568627451, roc_auc = 1.0, average precision = 1.0
+
+y_test_pred = RF_clf.predict(X_test_processed)
+y_test_pred_prob = RF_clf.predict_proba(X_test_processed)[: ,1]
+test_accuracy = accuracy_score(y_test_processed, y_test_pred)
+test_f1 = f1_score(y_test_processed, y_test_pred)
+test_roc_auc = roc_auc_score(y_test_processed, y_test_pred_prob)
+test_average_precision = average_precision_score(y_test_processed, y_test_pred_prob)
+print(f"Test metrics are: accuracy = {test_accuracy}, f1 = {test_f1}, roc_auc = {test_roc_auc}, average precision = {test_average_precision}")
+# Test metrics are: accuracy = 0.8369565217391305, f1 = 0.4444444444444444, roc_auc = 0.7746337547662051, average precision = 0.5201777198978276
