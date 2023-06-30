@@ -1,16 +1,18 @@
 import numpy as np
+from scipy import stats
+from evidently import DataDriftTable, Report
+
 class ModelMonitoring():
     def __init__(self):
         self.numerical_columns = []
         self.categorical_columns = []
         self.stat_test_foreach_column = {}
-
+        
     def get_numerical_columns(self, df):
         list_column_names = list(df.columns)
         numerical_list = []
         for col in list_column_names:
-            if ((df[col].dtype in [np.int64,float]) and (df[col].nunique())) > 5:
-                # print("Inside Numerical")
+            if ((df[col].dtype in [np.int64,float])):
                 numerical_list.append(col)
                 continue
         return numerical_list
@@ -19,11 +21,49 @@ class ModelMonitoring():
         list_column_names = list(df.columns)
         categorical_list = []
         for col in list_column_names:
-            if col not in self.numerical_columns:
+            if ((df[col].dtype in [object, str, 'category'])):
                 categorical_list.append(col)
         return categorical_list
-
-    def feature_drift(self, df):
-        self.numerical_columns = self.get_numerical_columns(df)
-        self.categorical_columns = self.get_categorical_columns(df)
+    
+    def categorical_stat_test_algo(self, df, categorical_columns, num_of_rows, column_dictionary):
+        if (num_of_rows <= 1000):
+            for col in categorical_columns:
+                if df[col].nunique > 2:
+                    column_dictionary.update({col:'chisquare'})
+                else:
+                    column_dictionary.update({col:'z'})
+        else:
+            for col in categorical_columns:
+                column_dictionary.update({col:'jensenshannon'})
+        return column_dictionary
+    
+    def numerical_stat_test_algo(self, df, numerical_columns, num_of_rows, column_dictionary):
+        if (num_of_rows <= 1000):
+            for col in numerical_columns:
+                column_dictionary.udpate({col:'ks'})
+        else:
+            for col in numerical_columns:
+                res = 0
+                if (num_of_rows < 5000):
+                    res = stats.shapiro(df[col])
+                else:
+                    res = stats.anderson(df[col])
+                if (res.statistic > 0.7):
+                    column_dictionary.update({col:'t_test'})
+                else:
+                    column_dictionary.update({col:'wasserstein'})
+        return column_dictionary
         
+    def feature_drift_report(self, train_df, test_df):
+        self.numerical_columns = self.get_numerical_columns(test_df)
+        self.categorical_columns = self.get_categorical_columns(test_df)
+        numerical_column_dictionary = {}
+        categorical_column_dictionary = {}
+        numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)
+        categorical_column_dictionary = self.categorical_stat_test_algo(test_df, self.categorical_columns, len(test_df), categorical_column_dictionary)
+        overall_column_dictionary = {**categorical_column_dictionary, **numerical_column_dictionary}
+        data_drift_report = Report(metrics = [
+            DataDriftTable(per_column_stattest=overall_column_dictionary)
+        ])
+        data_drift_report.run(reference_data=train_df, current_data=test_df)
+        data_drift_report.save_html('../reports/feature_drift_report.html')
