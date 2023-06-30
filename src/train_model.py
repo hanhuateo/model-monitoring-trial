@@ -26,8 +26,8 @@ X_train.reset_index(drop=True, inplace=True)
 X_test.reset_index(drop=True, inplace=True)
 print(X_train)
 print(X_test)
-X_train.to_csv("../data/split_data/employee_train.csv")
-X_test.to_csv("../data/split_data/employee_test.csv")
+X_train.to_csv("../data/split_data/employee_train.csv", index=False)
+X_test.to_csv("../data/split_data/employee_test.csv", index=False)
 
 # this part is to go through the standard data science pipeline to train the model
 # will not be used again after first time running
