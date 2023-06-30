@@ -18,21 +18,21 @@ from joblib import dump
 # this part is to split the original dataset into a reference dataset (X_train) and an unseen dataset (X_test)
 # will not be used again after first time running
 
-df = pd.read_csv("../data/raw/employee.csv")
-X_train, X_test = train_test_split(df, test_size=0.5, random_state=42)
-print(X_train)
-print(X_test)
-X_train.reset_index(drop=True, inplace=True)
-X_test.reset_index(drop=True, inplace=True)
-print(X_train)
-print(X_test)
-X_train.to_csv("../data/split_data/employee_train.csv", index=False)
-X_test.to_csv("../data/split_data/employee_test.csv", index=False)
+# df = pd.read_csv("../data/raw/employee.csv")
+# X_train, X_test = train_test_split(df, test_size=0.5, random_state=42)
+# print(X_train)
+# print(X_test)
+# X_train.reset_index(drop=True, inplace=True)
+# X_test.reset_index(drop=True, inplace=True)
+# print(X_train)
+# print(X_test)
+# X_train.to_csv("../data/split_data/employee_train.csv", index=False)
+# X_test.to_csv("../data/split_data/employee_test.csv", index=False)
 
 # this part is to go through the standard data science pipeline to train the model
 # will not be used again after first time running
 # read dataset
-"""
+
 df = pd.read_csv("../data/split_data/employee_train.csv")
 
 # data cleaning
@@ -163,7 +163,7 @@ train_f1  = f1_score(y_train_processed, y_train_pred)
 train_roc_auc = roc_auc_score(y_train_processed, y_train_pred_prob)
 train_averaege_precision = average_precision_score(y_train_processed, y_train_pred_prob)
 print(f"Train metrics are: accuracy = {train_accuracy}, f1 = {train_f1}, roc_auc = {train_roc_auc}, average precision = {train_averaege_precision}")
-# Train metrics are: accuracy = 0.9927404718693285, f1 = 0.9803921568627451, roc_auc = 1.0, average precision = 1.0
+# Train metrics are: accuracy = 0.9927404718693285, f1 = 0.9801980198019802, roc_auc = 0.9987583148558759, average precision = 0.9934425899375228
 
 y_test_pred = RF_clf.predict(X_test_processed)
 y_test_pred_prob = RF_clf.predict_proba(X_test_processed)[: ,1]
@@ -172,5 +172,4 @@ test_f1 = f1_score(y_test_processed, y_test_pred)
 test_roc_auc = roc_auc_score(y_test_processed, y_test_pred_prob)
 test_average_precision = average_precision_score(y_test_processed, y_test_pred_prob)
 print(f"Test metrics are: accuracy = {test_accuracy}, f1 = {test_f1}, roc_auc = {test_roc_auc}, average precision = {test_average_precision}")
-# Test metrics are: accuracy = 0.8369565217391305, f1 = 0.4444444444444444, roc_auc = 0.7746337547662051, average precision = 0.5201777198978276
-"""
+# Test metrics are: accuracy = 0.8369565217391305, f1 = 0.34782608695652173, roc_auc = 0.7888821994782261, average precision = 0.5176484347399173
