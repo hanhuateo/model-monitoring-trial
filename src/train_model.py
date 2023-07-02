@@ -1,5 +1,5 @@
 import pandas as pd
-
+from numpy import savetxt
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer, make_column_selector
 
@@ -157,6 +157,7 @@ RF_clf.fit(X_train_processed, y_train_processed)
 dump(RF_clf, './model/RF_clf.joblib')
 
 y_train_pred = RF_clf.predict(X_train_processed)
+savetxt('../data/employee_attrition_train_pred', y_train_pred, delimiter=',')
 y_train_pred_prob = RF_clf.predict_proba(X_train_processed)[:, 1]
 train_accuracy = accuracy_score(y_train_processed, y_train_pred)
 train_f1  = f1_score(y_train_processed, y_train_pred)
