@@ -79,9 +79,9 @@ print(f"Numerical features are : {numerical_features}")
 
 # Data Preprocessing
 X = df.drop(columns=['Attrition'])
-X.to_csv("../data/train_data/employee_train_features.csv")
+X.to_csv("../data/train_data/employee_train_features.csv", index=False)
 y = df['Attrition']
-y.to_csv("../data/train_data/employee_attrition_ground_truth.csv")
+y.to_csv("../data/train_data/employee_attrition_ground_truth.csv", index=False)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42, stratify=y)
 
@@ -159,7 +159,7 @@ RF_clf.fit(X_train_processed, y_train_processed)
 dump(RF_clf, './model/RF_clf.joblib')
 
 y_train_pred = RF_clf.predict(X_train_processed)
-savetxt('../data/employee_attrition_train_pred', y_train_pred, delimiter=',')
+savetxt('../data/train_data/employee_train_attrition_pred.csv', y_train_pred, delimiter=',')
 y_train_pred_prob = RF_clf.predict_proba(X_train_processed)[:, 1]
 train_accuracy = accuracy_score(y_train_processed, y_train_pred)
 train_f1  = f1_score(y_train_processed, y_train_pred)

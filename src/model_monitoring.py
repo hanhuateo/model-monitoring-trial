@@ -2,13 +2,14 @@ import numpy as np
 from scipy import stats
 from evidently.metrics import DataDriftTable
 from evidently.report import Report
+from evidently import ColumnMapping
 
 class ModelMonitoring():
     def __init__(self):
         self.numerical_columns = []
         self.categorical_columns = []
-        self.ground_truth_column = [] # if have then initialise
-        self.train_prediction_column = [] # th
+        self.ground_truth_column = [] 
+        self.train_prediction_column = [] 
         self.stat_test_foreach_column = {}
         
     def get_numerical_columns(self, df):
