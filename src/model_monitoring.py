@@ -2,14 +2,15 @@ import numpy as np
 from scipy import stats
 from evidently.metrics import DataDriftTable
 from evidently.report import Report
+from evidently.metric_preset import TargetDriftPreset
 from evidently import ColumnMapping
 
 class ModelMonitoring():
     def __init__(self):
         self.numerical_columns = []
         self.categorical_columns = []
-        self.ground_truth_column = [] 
-        self.train_prediction_column = [] 
+        # self.ground_truth_column = [] 
+        # self.train_prediction_column = [] 
         self.stat_test_foreach_column = {}
         
     def get_numerical_columns(self, df):
@@ -66,14 +67,19 @@ class ModelMonitoring():
         numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)
         categorical_column_dictionary = self.categorical_stat_test_algo(test_df, self.categorical_columns, len(test_df), categorical_column_dictionary)
         self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
-        data_drift_report = Report(metrics = [
+        feature_drift_report = Report(metrics = [
             DataDriftTable(per_column_stattest=self.stat_test_foreach_column)
         ])
-        data_drift_report.run(reference_data=train_df, current_data=test_df)
-        data_drift_report.save_html('../reports/feature_drift_report.html')
+        feature_drift_report.run(reference_data=train_df, current_data=test_df)
+        feature_drift_report.save_html('../reports/feature_drift_report.html')
 
-    def label_drift_report(self, train_df, test_df):
-        pass
+    def target_drift_report(self, train_df, test_df):
+        target_drift_report = Report(metrics=[
+            TargetDriftPreset(),
+        ])
+        target_drift_report.run(reference_data=train_df, current_data=test_df)
+        print("Inside target drift report")
+        target_drift_report.save_html('../reports/feature_drift_report.html')
 
     def set_ground_truth(self, ground_truth_column):
         self.ground_truth_column = ground_truth_column
