@@ -26,14 +26,14 @@ from joblib import dump
 # X_test.reset_index(drop=True, inplace=True)
 # print(X_train)
 # print(X_test)
-# X_train.to_csv("../data/split_data/employee_train.csv", index=False)
-# X_test.to_csv("../data/split_data/employee_test.csv", index=False)
+# X_train.to_csv("../data/raw_split_data/employee_train.csv", index=False)
+# X_test.to_csv("../data/raw_split_data/employee_test.csv", index=False)
 
 # this part is to go through the standard data science pipeline to train the model
 # will not be used again after first time running
-# read dataset
 
-df = pd.read_csv("../data/split_data/employee_train.csv")
+# read dataset
+df = pd.read_csv("../data/raw_split_data/employee_train.csv")
 
 # data cleaning
 df.drop(columns=['EmployeeCount', 'Over18', 'StandardHours', 'EmployeeNumber'], inplace=True)
@@ -45,7 +45,7 @@ df = df.replace({'BusinessTravel': {'Non-Travel':1,
 # data understanding
 feature_names = df.drop(columns='Attrition').columns.to_list()
 print(f"feature names are : {feature_names}")
-# feature names are : ['Unnamed: 0', 'Age', 'BusinessTravel', 'DailyRate', 'Department', 'DistanceFromHome', 'Education', 'EducationField', 'EnvironmentSatisfaction', 'Gender', 'HourlyRate', 'JobInvolvement', 'JobLevel', 'JobRole', 'JobSatisfaction', 'MaritalStatus', 'MonthlyIncome', 'MonthlyRate', 'NumCompaniesWorked', 'OverTime', 'PercentSalaryHike', 'PerformanceRating', 'RelationshipSatisfaction', 'StockOptionLevel', 'TotalWorkingYears', 'TrainingTimesLastYear', 'WorkLifeBalance', 'YearsAtCompany', 'YearsInCurrentRole', 'YearsSinceLastPromotion', 'YearsWithCurrManager'] 
+# feature names are : ['Age', 'BusinessTravel', 'DailyRate', 'Department', 'DistanceFromHome', 'Education', 'EducationField', 'EnvironmentSatisfaction', 'Gender', 'HourlyRate', 'JobInvolvement', 'JobLevel', 'JobRole', 'JobSatisfaction', 'MaritalStatus', 'MonthlyIncome', 'MonthlyRate', 'NumCompaniesWorked', 'OverTime', 'PercentSalaryHike', 'PerformanceRating', 'RelationshipSatisfaction', 'StockOptionLevel', 'TotalWorkingYears', 'TrainingTimesLastYear', 'WorkLifeBalance', 'YearsAtCompany', 'YearsInCurrentRole', 'YearsSinceLastPromotion', 'YearsWithCurrManager']
 
 # Categorical features
 # Nominal
@@ -66,6 +66,7 @@ ordinal_features_mapping = {'BusinessTravel': {1: 'Non-Travel', 2: 'Travel_Rarel
                             'StockOptionLevel': {0: 'Low', 1: 'Medium', 2: 'High', 3: 'Very High'},
                             'WorkLifeBalance': {1: 'Bad', 2: 'Good', 3: 'Better', 4: 'Best'}
                             }
+
 ordinal_features = list(ordinal_features_mapping.keys())
 print(f"Ordinal features are : {ordinal_features}")
 # Ordinal features are : ['BusinessTravel', 'Education', 'EnvironmentSatisfaction', 'JobInvolvement', 'JobLevel', 'JobSatisfaction', 'PerformanceRating', 'RelationshipSatisfaction', 'StockOptionLevel', 'WorkLifeBalance']
@@ -73,13 +74,14 @@ print(f"Ordinal features are : {ordinal_features}")
 # Numerical features
 numerical_features = [feature for feature in feature_names if feature not in nominal_features + ordinal_features]
 print(f"Numerical features are : {numerical_features}")
-# Numerical features are : ['Unnamed: 0', 'Age', 'DailyRate', 'DistanceFromHome', 'HourlyRate', 'MonthlyIncome', 'MonthlyRate', 'NumCompaniesWorked', 'PercentSalaryHike', 'TotalWorkingYears', 'TrainingTimesLastYear', 'YearsAtCompany', 'YearsInCurrentRole', 'YearsSinceLastPromotion', 'YearsWithCurrManager']
+# Numerical features are : ['Age', 'DailyRate', 'DistanceFromHome', 'HourlyRate', 'MonthlyIncome', 'MonthlyRate', 'NumCompaniesWorked', 'PercentSalaryHike', 'TotalWorkingYears', 'TrainingTimesLastYear', 'YearsAtCompany', 'YearsInCurrentRole', 'YearsSinceLastPromotion', 'YearsWithCurrManager']
 # Skipped EDA
 
 # Data Preprocessing
 X = df.drop(columns=['Attrition'])
+X.to_csv("../data/train_data/employee_train_features.csv")
 y = df['Attrition']
-y.to_csv("../data/employee_attrition_ground_truth.csv")
+y.to_csv("../data/train_data/employee_attrition_ground_truth.csv")
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42, stratify=y)
 

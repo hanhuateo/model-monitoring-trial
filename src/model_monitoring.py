@@ -1,11 +1,14 @@
 import numpy as np
 from scipy import stats
-from evidently import DataDriftTable, Report
+from evidently.metrics import DataDriftTable
+from evidently.report import Report
 
 class ModelMonitoring():
     def __init__(self):
         self.numerical_columns = []
         self.categorical_columns = []
+        self.ground_truth_column = [] # if have then initialise
+        self.train_prediction_column = [] # th
         self.stat_test_foreach_column = {}
         
     def get_numerical_columns(self, df):
@@ -28,7 +31,7 @@ class ModelMonitoring():
     def categorical_stat_test_algo(self, df, categorical_columns, num_of_rows, column_dictionary):
         if (num_of_rows <= 1000):
             for col in categorical_columns:
-                if df[col].nunique > 2:
+                if ((df[col].nunique()) > 2):
                     column_dictionary.update({col:'chisquare'})
                 else:
                     column_dictionary.update({col:'z'})
@@ -40,7 +43,7 @@ class ModelMonitoring():
     def numerical_stat_test_algo(self, df, numerical_columns, num_of_rows, column_dictionary):
         if (num_of_rows <= 1000):
             for col in numerical_columns:
-                column_dictionary.udpate({col:'ks'})
+                column_dictionary.update({col:'ks'})
         else:
             for col in numerical_columns:
                 res = 0
@@ -61,9 +64,15 @@ class ModelMonitoring():
         categorical_column_dictionary = {}
         numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)
         categorical_column_dictionary = self.categorical_stat_test_algo(test_df, self.categorical_columns, len(test_df), categorical_column_dictionary)
-        overall_column_dictionary = {**categorical_column_dictionary, **numerical_column_dictionary}
+        self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
         data_drift_report = Report(metrics = [
-            DataDriftTable(per_column_stattest=overall_column_dictionary)
+            DataDriftTable(per_column_stattest=self.stat_test_foreach_column)
         ])
         data_drift_report.run(reference_data=train_df, current_data=test_df)
         data_drift_report.save_html('../reports/feature_drift_report.html')
+
+    def label_drift_report(self, train_df, test_df):
+        pass
+
+    def set_ground_truth(self, ground_truth_column):
+        self.ground_truth_column = ground_truth_column
