@@ -73,7 +73,9 @@ class ModelMonitoring():
         feature_drift_report.run(reference_data=train_df, current_data=test_df)
         feature_drift_report.save_html('../reports/feature_drift_report.html')
 
-    def target_drift_report(self, train_df, test_df):
+    def target_drift_report(self, train_df, test_df, target):
+        train_df.rename(columns = {target : 'target'})
+        test_df.rename(columns = {target : 'target'})
         target_drift_report = Report(metrics=[
             TargetDriftPreset(),
         ])
