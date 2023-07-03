@@ -42,7 +42,7 @@ df = df.replace({'BusinessTravel': {'Non-Travel':1,
                                     'Travel_Rarely':2,
                                     'Travel_Frequently':3}
                  })
-
+df.to_csv('../data/cleaned_data/cleaned_employee_train.csv', index=False)
 # data understanding
 feature_names = df.drop(columns='Attrition').columns.to_list()
 print(f"feature names are : {feature_names}")
