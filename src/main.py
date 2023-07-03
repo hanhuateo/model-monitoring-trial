@@ -10,7 +10,7 @@ label_encoder = load("./preprocessor/label_encoder.pkl")
 model_monitoring = ModelMonitoring()
 
 test_df = pd.read_csv("../data/raw_split_data/employee_test.csv")
-train_df = pd.read_csv("../data/train_data/employee_train_features.csv")
+train_df = pd.read_csv("../data/raw_split_data/employee_train.csv")
 
 # data cleaning
 test_df.drop(columns=['EmployeeCount', 'Over18', 'StandardHours', 'EmployeeNumber'], inplace=True)
@@ -50,28 +50,21 @@ numerical_features = [feature for feature in feature_names if feature not in nom
 print(f"Numerical features are : {numerical_features}")
 
 # Data Preprocessing
-X = test_df.drop(columns=['Attrition'])
-X.to_csv("../data/test_data/employee_test_features.csv", index=False)
-y = test_df['Attrition']
-y.to_csv("../data/test_data/employee_test_attrition_ground_truth.csv", index=False)
+X_test = test_df.drop(columns=['Attrition'])
+X_test.to_csv("../data/test_data/employee_test_features.csv", index=False)
+y_test = test_df['Attrition']
+y_test.to_csv("../data/test_data/employee_test_attrition_ground_truth.csv", index=False)
 # Feature Drift
-model_monitoring.feature_drift_report(train_df=train_df, test_df=X)
+model_monitoring.feature_drift_report(train_df=train_df.drop(columns=['Attrition']), test_df=X_test)
 # the line of code above produces a warning that looks something like
 # WARNING:root:Column Gender have different types in reference object and current category. Returning type from reference
 # this warning stems from the fact that in line 30, we have set the dtype of object to category
 # even though we have also done so in train_model.py, 
 # this is most likely undone when we read employee_train_features.csv
 
-X_processed = column_transformer.transform(X)
-y_pred = RF_clf.predict(X_processed)
-savetxt('../data/processed_test_data/employee_test_attrition_processed_pred.csv', y_pred, delimiter=',')
-employee_test_attrition_processed_pred = pd.read_csv('../data/processed_test_data/employee_test_attrition_processed_pred.csv')
-employee_test_attrition_ground_truth = pd.read_csv("../data/test_data/employee_test_attrition_ground_truth.csv")
-employee_test_attrition_ground_truth_processed = label_encoder.transform(employee_test_attrition_ground_truth)
-savetxt('../data/processed_test_data/employee_test_attrition_ground_truth_processed.csv', employee_test_attrition_ground_truth_processed, delimiter=',')
-employee_test_attrition_ground_truth_processed = pd.read_csv('../data/processed_test_data/employee_test_attrition_ground_truth_processed.csv')
-employee_test_attrition_ground_truth_processed.columns = ['target']
-employee_test_attrition_processed_pred.columns = ['prediction']
-print(f"ground truth processed : {employee_test_attrition_ground_truth_processed}")
-print(f"prediction processed : {employee_test_attrition_processed_pred}")
-model_monitoring.target_drift_report(train_df=employee_test_attrition_ground_truth_processed, test_df=employee_test_attrition_processed_pred)
+X_test_processed = column_transformer.transform(X_test)
+y_test_pred = RF_clf.predict(X_test_processed)
+y_test_pred_inverse = label_encoder.inverse_transform(y_test_pred)
+test_df['prediction'] = y_test_pred_inverse
+
+# X_train_processed = column_transformer.

@@ -80,9 +80,9 @@ print(f"Numerical features are : {numerical_features}")
 
 # Data Preprocessing
 X = df.drop(columns=['Attrition'])
-X.to_csv("../data/train_data/employee_train_features.csv", index=False)
+# X.to_csv("../data/train_data/employee_train_features.csv", index=False)
 y = df['Attrition']
-y.to_csv("../data/train_data/employee_attrition_ground_truth.csv", index=False)
+# y.to_csv("../data/train_data/employee_attrition_ground_truth.csv", index=False)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42, stratify=y)
 
