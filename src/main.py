@@ -10,7 +10,7 @@ label_encoder = load("./preprocessor/label_encoder.pkl")
 model_monitoring = ModelMonitoring()
 
 test_df = pd.read_csv("../data/raw_split_data/employee_test.csv")
-train_df = pd.read_csv("../data/raw_split_data/employee_train.csv")
+train_df = pd.read_csv("../data/cleaned_data/cleaned_employee_train.csv")
 
 # data cleaning
 test_df.drop(columns=['EmployeeCount', 'Over18', 'StandardHours', 'EmployeeNumber'], inplace=True)
