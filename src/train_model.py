@@ -1,6 +1,6 @@
 import pandas as pd
-import numpy as np
-from numpy import savetxt
+# import numpy as np
+# from numpy import savetxt
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer, make_column_selector
 
@@ -185,4 +185,9 @@ def main():
     # read dataset
     df = pd.read_csv("../data/raw_split_data/employee_train.csv")
     df = data_cleaning(df)
-    
+    data_understanding(df)
+    X_train_processed, y_train_processed, X_test_processed, y_test_processed = data_preprocessing(df)
+    RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_test_processed)
+
+if __name__ == "__main__":
+    main()

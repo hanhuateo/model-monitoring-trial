@@ -12,6 +12,7 @@ class ModelMonitoring():
         # self.ground_truth_column = [] 
         # self.train_prediction_column = [] 
         self.stat_test_foreach_column = {}
+        self.column_mapping = ColumnMapping()
         
     def get_numerical_columns(self, df):
         list_column_names = list(df.columns)
@@ -62,25 +63,25 @@ class ModelMonitoring():
     def feature_drift_report(self, train_df, test_df):
         self.numerical_columns = self.get_numerical_columns(test_df)
         self.categorical_columns = self.get_categorical_columns(test_df)
+        self.column_mapping.numerical_features = self.numerical_columns
+        self.column_mapping.categorical_features = self.categorical_columns
         numerical_column_dictionary = {}
         categorical_column_dictionary = {}
         numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)
         categorical_column_dictionary = self.categorical_stat_test_algo(test_df, self.categorical_columns, len(test_df), categorical_column_dictionary)
         self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
         feature_drift_report = Report(metrics = [
-            DataDriftTable(per_column_stattest=self.stat_test_foreach_column)
+            DataDriftTable(per_column_stattest=self.stat_test_foreach_column),
+            TargetDriftPreset(),
         ])
         feature_drift_report.run(reference_data=train_df, current_data=test_df)
         feature_drift_report.save_html('../reports/feature_drift_report.html')
 
-    def target_drift_report(self, train_df, test_df, target):
-        train_df.rename(columns = {target : 'target'})
-        test_df.rename(columns = {target : 'target'})
+    def target_drift_report(self, train_df, test_df):
         target_drift_report = Report(metrics=[
             TargetDriftPreset(),
         ])
         target_drift_report.run(reference_data=train_df, current_data=test_df)
-        print("Inside target drift report")
         target_drift_report.save_html('../reports/feature_drift_report.html')
 
     def set_ground_truth(self, ground_truth_column):
