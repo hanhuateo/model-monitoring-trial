@@ -74,11 +74,6 @@ class ModelMonitoring():
         self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
         feature_drift_report = Report(metrics = [
             DataDriftTable(per_column_stattest=self.stat_test_foreach_column),
-            # TargetDriftPreset(),
-            # ColumnDriftMetric(column_name='prediction'),
-            # ColumnDriftMetric(column_name='target'),
-            # ColumnCorrelationsMetric(column_name='prediction'),
-            # ColumnCorrelationsMetric(column_name='target'),
         ])
         feature_drift_report.run(reference_data=train_df, current_data=test_df)
         feature_drift_report.save_html('../reports/feature_drift_report.html')
@@ -90,5 +85,9 @@ class ModelMonitoring():
         target_drift_report.run(reference_data=train_df, current_data=test_df)
         target_drift_report.save_html('../reports/target_drift_report.html')
 
-    def set_ground_truth(self, ground_truth_column):
-        self.ground_truth_column = ground_truth_column
+    def ensure_processing_correct(self, before, after):
+        ensure_processing_correct_report = Report(metrics=[
+            DataDriftTable(),
+        ])
+        ensure_processing_correct_report.run(reference_data=before, current_data=after)
+        ensure_processing_correct_report.save_html('../reports/ensure_processing_correct_report.html')

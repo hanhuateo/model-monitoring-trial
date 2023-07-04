@@ -65,6 +65,7 @@ train_df = data_cleaning(train_df)
 X_train = train_df.drop(columns=['Attrition'])
 y_train = train_df['Attrition']
 X_train_processed = column_transformer.transform(X_train)
+print(f"X_train_processed : {X_train_processed}, {X_train_processed.shape}")
 y_train_pred = RF_clf.predict(X_train_processed)
 y_train_pred_inverse = label_encoder.inverse_transform(y_train_pred)
 train_df['prediction'] = y_train_pred_inverse
@@ -81,3 +82,5 @@ model_monitoring.feature_drift_report(train_df=train_df, test_df=test_df)
 
 # Target Drift
 model_monitoring.target_drift_report(train_df=train_df, test_df=test_df)
+
+# Ensure Processing of Data changes distribution
