@@ -161,6 +161,7 @@ def RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_
     RF_clf = RandomForestClassifier(**RF_search.best_params_, class_weight='balanced', random_state=42)
     RF_clf.fit(X_train_processed, y_train_processed)
 
+    print(f"feature importances : {RF_clf.feature_importances_.argsort()}")
     dump(RF_clf, './model/RF_clf.joblib')
 
     y_train_pred = RF_clf.predict(X_train_processed)

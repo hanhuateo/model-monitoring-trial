@@ -4,6 +4,7 @@ from evidently.metrics import DataDriftTable
 from evidently.report import Report
 from evidently.metric_preset import TargetDriftPreset
 from evidently import ColumnMapping
+from evidently.metrics import ColumnDriftMetric, ColumnCorrelationsMetric, TargetByFeaturesTable
 
 class ModelMonitoring():
     def __init__(self):
@@ -65,6 +66,7 @@ class ModelMonitoring():
         self.categorical_columns = self.get_categorical_columns(test_df)
         self.column_mapping.numerical_features = self.numerical_columns
         self.column_mapping.categorical_features = self.categorical_columns
+        self.column_mapping.task = 'classification'
         numerical_column_dictionary = {}
         categorical_column_dictionary = {}
         numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)
@@ -72,7 +74,12 @@ class ModelMonitoring():
         self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
         feature_drift_report = Report(metrics = [
             DataDriftTable(per_column_stattest=self.stat_test_foreach_column),
-            TargetDriftPreset(),
+            # TargetDriftPreset(),
+            ColumnDriftMetric(column_name='prediction'),
+            ColumnDriftMetric(column_name='target'),
+            ColumnCorrelationsMetric(column_name='prediction'),
+            ColumnCorrelationsMetric(column_name='target'),
+            
         ])
         feature_drift_report.run(reference_data=train_df, current_data=test_df)
         feature_drift_report.save_html('../reports/feature_drift_report.html')
