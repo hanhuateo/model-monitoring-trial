@@ -107,7 +107,7 @@ def data_preprocessing(df):
     # define categorical and numerical transformers
     categorical_transformer = Pipeline(steps=[
         # ('SimpleImputer', SimpleImputer(strategy='most_frequent')),
-        ('encoder', OneHotEncoder())
+        ('encoder', OneHotEncoder(drop=None))
     ])
 
     numerical_transformer = Pipeline(steps=[
@@ -158,8 +158,8 @@ def RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_
     # hyperparameter tuning
     RF_search = GridSearchCV(RF_clf, param_grid=param_grid, scoring='roc_auc', cv=5, verbose=1, n_jobs=-1)
     RF_search.fit(X_train_processed, y_train_processed)
-    print(f"X_train_processed : {X_train_processed}")
-    print(f"y_train_processed : {y_train_processed}")
+    # print(f"X_train_processed : {X_train_processed}")
+    # print(f"y_train_processed : {y_train_processed}")
     RF_clf = RandomForestClassifier(**RF_search.best_params_, class_weight='balanced', random_state=42)
     RF_clf.fit(X_train_processed, y_train_processed)
 
