@@ -4,7 +4,6 @@ from evidently.metrics import DataDriftTable
 from evidently.report import Report
 from evidently.metric_preset import TargetDriftPreset
 from evidently import ColumnMapping
-from evidently.metrics import ColumnDriftMetric, ColumnCorrelationsMetric, TargetByFeaturesTable
 
 class ModelMonitoring():
     def __init__(self):
@@ -84,10 +83,3 @@ class ModelMonitoring():
         ])
         target_drift_report.run(reference_data=train_df, current_data=test_df)
         target_drift_report.save_html('../reports/target_drift_report.html')
-
-    def ensure_processing_correct(self, before, after):
-        ensure_processing_correct_report = Report(metrics=[
-            DataDriftTable(),
-        ])
-        ensure_processing_correct_report.run(reference_data=before, current_data=after)
-        ensure_processing_correct_report.save_html('../reports/ensure_processing_correct_report.html')

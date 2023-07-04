@@ -31,7 +31,6 @@ from joblib import dump
 # X_test.to_csv("../data/raw_split_data/employee_test.csv", index=False)
 
 # this part is to go through the standard data science pipeline to train the model
-# will not be used again after first time running
 
 # data cleaning
 def data_cleaning(df):
