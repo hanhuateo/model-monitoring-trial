@@ -1,5 +1,5 @@
 import pandas as pd
-# import numpy as np
+import numpy as np
 # from numpy import savetxt
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer, make_column_selector
@@ -102,12 +102,12 @@ def data_preprocessing(df):
 
     X_test.reset_index(drop=True, inplace=True)
     y_test.reset_index(drop=True, inplace=True)
-
+    
     # Preprocessing Pipeline
     # define categorical and numerical transformers
     categorical_transformer = Pipeline(steps=[
         # ('SimpleImputer', SimpleImputer(strategy='most_frequent')),
-        ('encoder', OneHotEncoder(drop=None))
+        ('encoder', OneHotEncoder())
     ])
 
     numerical_transformer = Pipeline(steps=[
@@ -139,10 +139,12 @@ def data_preprocessing(df):
     print(f"Shape of y_test_processed after preprocessing: {y_test_processed.shape}")
 
     dump(LE, './preprocessor/label_encoder.pkl')
+    
+    # X_train_processed, y_train_processed, X_test_processed, y_test_processed = X_train, y_train, X_test, y_test
     return X_train_processed, y_train_processed, X_test_processed, y_test_processed
 
 # random forest
-def RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_test_processed, df):
+def RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_test_processed):
     RF_clf = RandomForestClassifier(class_weight='balanced', random_state=42)
 
     param_grid = {'n_estimators': [100, 500, 900], 
@@ -156,7 +158,8 @@ def RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_
     # hyperparameter tuning
     RF_search = GridSearchCV(RF_clf, param_grid=param_grid, scoring='roc_auc', cv=5, verbose=1, n_jobs=-1)
     RF_search.fit(X_train_processed, y_train_processed)
-
+    print(f"X_train_processed : {X_train_processed}")
+    print(f"y_train_processed : {y_train_processed}")
     RF_clf = RandomForestClassifier(**RF_search.best_params_, class_weight='balanced', random_state=42)
     RF_clf.fit(X_train_processed, y_train_processed)
 
@@ -183,10 +186,20 @@ def RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_
 def main():
     # read dataset
     df = pd.read_csv("../data/raw_split_data/employee_train.csv")
+    # columns_list = df.columns.tolist()
+    # for col in columns_list:
+    #     if df[col].dtype == np.int64:
+    #         continue
+    #     for element in df[col]:
+    #         element.replace(' ', '_')
+    # html = df.to_html()
+    # text_file = open("index.html", "w")
+    # text_file.write(html)
+    # text_file.close()
     df = data_cleaning(df)
     data_understanding(df)
     X_train_processed, y_train_processed, X_test_processed, y_test_processed = data_preprocessing(df)
-    RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_test_processed, df)
+    RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_test_processed)
 
 if __name__ == "__main__":
     main()
