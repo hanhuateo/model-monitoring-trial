@@ -75,11 +75,10 @@ class ModelMonitoring():
         feature_drift_report = Report(metrics = [
             DataDriftTable(per_column_stattest=self.stat_test_foreach_column),
             # TargetDriftPreset(),
-            ColumnDriftMetric(column_name='prediction'),
-            ColumnDriftMetric(column_name='target'),
-            ColumnCorrelationsMetric(column_name='prediction'),
-            ColumnCorrelationsMetric(column_name='target'),
-            
+            # ColumnDriftMetric(column_name='prediction'),
+            # ColumnDriftMetric(column_name='target'),
+            # ColumnCorrelationsMetric(column_name='prediction'),
+            # ColumnCorrelationsMetric(column_name='target'),
         ])
         feature_drift_report.run(reference_data=train_df, current_data=test_df)
         feature_drift_report.save_html('../reports/feature_drift_report.html')
@@ -89,7 +88,7 @@ class ModelMonitoring():
             TargetDriftPreset(),
         ])
         target_drift_report.run(reference_data=train_df, current_data=test_df)
-        target_drift_report.save_html('../reports/feature_drift_report.html')
+        target_drift_report.save_html('../reports/target_drift_report.html')
 
     def set_ground_truth(self, ground_truth_column):
         self.ground_truth_column = ground_truth_column

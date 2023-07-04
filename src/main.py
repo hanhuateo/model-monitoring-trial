@@ -58,7 +58,7 @@ y_test_pred = RF_clf.predict(X_test_processed)
 y_test_pred_inverse = label_encoder.inverse_transform(y_test_pred)
 test_df['prediction'] = y_test_pred_inverse
 test_df.rename(columns={'Attrition' : 'target'}, inplace=True)
-print(f"test data set : {test_df}")
+# print(f"test data set : {test_df}")
 
 train_df = pd.read_csv("../data/raw_split_data/employee_train.csv")
 train_df = data_cleaning(train_df)
@@ -69,7 +69,7 @@ y_train_pred = RF_clf.predict(X_train_processed)
 y_train_pred_inverse = label_encoder.inverse_transform(y_train_pred)
 train_df['prediction'] = y_train_pred_inverse
 train_df.rename(columns={'Attrition' : 'target'}, inplace=True)
-print(f"train dataset : {train_df}")
+# print(f"train dataset : {train_df}")
 
 # Feature Drift
 model_monitoring.feature_drift_report(train_df=train_df, test_df=test_df)
@@ -80,4 +80,4 @@ model_monitoring.feature_drift_report(train_df=train_df, test_df=test_df)
 # this is most likely undone when we read employee_train_features.csv
 
 # Target Drift
-# model_monitoring.target_drift_report(train_df=train_df, test_df=test_df)
+model_monitoring.target_drift_report(train_df=train_df, test_df=test_df)

@@ -143,7 +143,7 @@ def data_preprocessing(df):
     return X_train_processed, y_train_processed, X_test_processed, y_test_processed
 
 # random forest
-def RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_test_processed):
+def RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_test_processed, df):
     RF_clf = RandomForestClassifier(class_weight='balanced', random_state=42)
 
     param_grid = {'n_estimators': [100, 500, 900], 
@@ -161,7 +161,6 @@ def RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_
     RF_clf = RandomForestClassifier(**RF_search.best_params_, class_weight='balanced', random_state=42)
     RF_clf.fit(X_train_processed, y_train_processed)
 
-    print(f"feature importances : {RF_clf.feature_importances_.argsort()}")
     dump(RF_clf, './model/RF_clf.joblib')
 
     y_train_pred = RF_clf.predict(X_train_processed)
@@ -188,7 +187,7 @@ def main():
     df = data_cleaning(df)
     data_understanding(df)
     X_train_processed, y_train_processed, X_test_processed, y_test_processed = data_preprocessing(df)
-    RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_test_processed)
+    RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_test_processed, df)
 
 if __name__ == "__main__":
     main()
