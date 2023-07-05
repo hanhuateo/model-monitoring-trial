@@ -20,7 +20,7 @@ from joblib import dump
 # will not be used again after first time running
 
 # df = pd.read_csv("../data/raw/employee.csv")
-# X_train, X_test = train_test_split(df, test_size=0.5, random_state=42)
+# X_train, X_test = train_test_split(df, test_size=0.5, random_state=42, stratify=df['Attrition'])
 # print(X_train)
 # print(X_test)
 # X_train.reset_index(drop=True, inplace=True)
@@ -172,7 +172,7 @@ def RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_
     train_roc_auc = roc_auc_score(y_train_processed, y_train_pred_prob)
     train_averaege_precision = average_precision_score(y_train_processed, y_train_pred_prob)
     print(f"Train metrics are: accuracy = {train_accuracy}, f1 = {train_f1}, roc_auc = {train_roc_auc}, average precision = {train_averaege_precision}")
-    # Train metrics are: accuracy = 0.9927404718693285, f1 = 0.9801980198019802, roc_auc = 0.9987583148558759, average precision = 0.9934425899375228
+    # Train metrics are: accuracy = 0.985480943738657, f1 = 0.9545454545454546, roc_auc = 0.9964902807775378, average precision = 0.9781413636799903
 
     y_test_pred = RF_clf.predict(X_test_processed)
     y_test_pred_prob = RF_clf.predict_proba(X_test_processed)[: ,1]
@@ -181,7 +181,7 @@ def RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_
     test_roc_auc = roc_auc_score(y_test_processed, y_test_pred_prob)
     test_average_precision = average_precision_score(y_test_processed, y_test_pred_prob)
     print(f"Test metrics are: accuracy = {test_accuracy}, f1 = {test_f1}, roc_auc = {test_roc_auc}, average precision = {test_average_precision}")
-    # Test metrics are: accuracy = 0.8369565217391305, f1 = 0.34782608695652173, roc_auc = 0.7888821994782261, average precision = 0.5176484347399173
+    # Test metrics are: accuracy = 0.8641304347826086, f1 = 0.4897959183673469, roc_auc = 0.7891774891774891, average precision = 0.5623943331157689
 
 def main():
     # read dataset
@@ -203,3 +203,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
