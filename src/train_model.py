@@ -186,16 +186,6 @@ def RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_
 def main():
     # read dataset
     df = pd.read_csv("../data/raw_split_data/employee_train.csv")
-    # columns_list = df.columns.tolist()
-    # for col in columns_list:
-    #     if df[col].dtype == np.int64:
-    #         continue
-    #     for element in df[col]:
-    #         element.replace(' ', '_')
-    # html = df.to_html()
-    # text_file = open("index.html", "w")
-    # text_file.write(html)
-    # text_file.close()
     df = data_cleaning(df)
     data_understanding(df)
     X_train_processed, y_train_processed, X_test_processed, y_test_processed = data_preprocessing(df)

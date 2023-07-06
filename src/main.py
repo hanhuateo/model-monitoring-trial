@@ -26,17 +26,7 @@ test_df['prediction'] = y_test_pred_inverse
 test_df.rename(columns={'Attrition' : 'target'}, inplace=True)
 # print(f"test data set : {test_df}")
 
-train_df = pd.read_csv("../data/raw_split_data/employee_train.csv")
-train_df = data_cleaning(train_df)
-X_train = train_df.drop(columns=['Attrition'])
-y_train = train_df['Attrition']
-X_train_processed = column_transformer.transform(X_train)
-print(f"X_train_processed : {X_train_processed}, {X_train_processed.shape}")
-y_train_pred = RF_clf.predict(X_train_processed)
-y_train_pred_inverse = label_encoder.inverse_transform(y_train_pred)
-train_df['prediction'] = y_train_pred_inverse
-train_df.rename(columns={'Attrition' : 'target'}, inplace=True)
-# print(f"train dataset : {train_df}")
+train_df = pd.read_csv("../data/cleaned_employee_train.csv")
 
 # Feature Drift
 model_monitoring.feature_drift_report(train_df=train_df, test_df=test_df)

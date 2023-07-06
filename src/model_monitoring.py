@@ -1,6 +1,10 @@
 import numpy as np
 from scipy import stats
 from evidently.metrics import DataDriftTable
+from evidently.metrics import ColumnDriftMetric
+from evidently.metrics import ColumnCorrelationsMetric
+from evidently.metrics import TargetByFeaturesTable
+import evidently.renderers.base_renderer as base_renderer
 from evidently.report import Report
 from evidently.metric_preset import TargetDriftPreset
 from evidently import ColumnMapping
@@ -79,7 +83,11 @@ class ModelMonitoring():
 
     def target_drift_report(self, train_df, test_df):
         target_drift_report = Report(metrics=[
-            TargetDriftPreset(),
+            ColumnDriftMetric(column_name='target'),
+            ColumnCorrelationsMetric(column_name='target'),
+            ColumnDriftMetric(column_name='prediction'),
+            ColumnCorrelationsMetric(column_name='prediction'),
+            TargetByFeaturesTable(),
         ])
         target_drift_report.run(reference_data=train_df, current_data=test_df)
         target_drift_report.save_html('../reports/target_drift_report.html')
