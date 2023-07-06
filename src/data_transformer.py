@@ -16,3 +16,6 @@ y_train_pred_inverse = label_encoder.inverse_transform(y_train_pred)
 df['prediction'] = y_train_pred_inverse
 df.rename(columns={'Attrition' : 'target'}, inplace=True)
 df.to_csv('../data/cleaned_employee_train.csv', index=False)
+
+X_train_processed_df = pd.DataFrame.from_records(X_train_processed)
+print(X_train_processed_df.head())
