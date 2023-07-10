@@ -91,3 +91,10 @@ class ModelMonitoring():
         ])
         target_drift_report.run(reference_data=train_df, current_data=test_df)
         target_drift_report.save_html('../reports/target_drift_report.html')
+
+    def processed_feature_drift_report(self, train_df, test_df):
+        feature_drift_report = Report(metrics = [
+            DataDriftTable(per_column_stattest=self.stat_test_foreach_column),
+        ])
+        feature_drift_report.run(reference_data=train_df, current_data=test_df)
+        feature_drift_report.save_html('../reports/processed_feature_drift_report.html')
