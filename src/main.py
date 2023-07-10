@@ -27,8 +27,8 @@ test_df['prediction'] = y_test_pred_inverse
 test_df.rename(columns={'Attrition' : 'target'}, inplace=True)
 # print(f"test data set : {test_df}")
 X_test_processed_df = pd.DataFrame.from_records(X_test_processed)
-X_test_processed_df = mapping(X_test_processed_df)
-# X_test_processed_df.to_csv('../data/X_test_processed.csv', index=False)
+X_test_processed_df = mapping(X_test_processed_df, column_transformer)
+X_test_processed_df.to_csv('../data/X_test_processed.csv', index=False)
 
 train_df = pd.read_csv("../data/cleaned_employee_train.csv")
 processed_train_df = pd.read_csv("../data/X_train_processed.csv")
