@@ -13,10 +13,7 @@ class ModelMonitoring():
     def __init__(self):
         self.numerical_columns = []
         self.categorical_columns = []
-        # self.ground_truth_column = [] 
-        # self.train_prediction_column = [] 
         self.stat_test_foreach_column = {}
-        self.column_mapping = ColumnMapping()
         
     def get_numerical_columns(self, df):
         list_column_names = list(df.columns)
@@ -67,9 +64,6 @@ class ModelMonitoring():
     def feature_drift_report(self, train_df, test_df):
         self.numerical_columns = self.get_numerical_columns(test_df)
         self.categorical_columns = self.get_categorical_columns(test_df)
-        self.column_mapping.numerical_features = self.numerical_columns
-        self.column_mapping.categorical_features = self.categorical_columns
-        self.column_mapping.task = 'classification'
         numerical_column_dictionary = {}
         categorical_column_dictionary = {}
         numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)
@@ -93,6 +87,8 @@ class ModelMonitoring():
         target_drift_report.save_html('../reports/target_drift_report.html')
 
     def processed_feature_drift_report(self, train_df, test_df):
+        self.column_mapping.categorical_features = []
+        self.column_mapping.numerical_features = []
         feature_drift_report = Report(metrics = [
             DataDriftTable(),
         ])

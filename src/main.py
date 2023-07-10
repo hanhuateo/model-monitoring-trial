@@ -34,7 +34,7 @@ train_df = pd.read_csv("../data/cleaned_employee_train.csv")
 processed_train_df = pd.read_csv("../data/X_train_processed.csv")
 
 # Feature Drift
-# model_monitoring.feature_drift_report(train_df=train_df, test_df=test_df)
+model_monitoring.feature_drift_report(train_df=train_df, test_df=test_df)
 # the line of code above produces a warning that looks something like
 # WARNING:root:Column Gender have different types in reference object and current category. Returning type from reference
 # this warning stems from the fact that in line 30, we have set the dtype of object to category
@@ -42,7 +42,7 @@ processed_train_df = pd.read_csv("../data/X_train_processed.csv")
 # this is most likely undone when we read employee_train_features.csv
 
 # Processed Feature Drift
-model_monitoring.processed_feature_drift_report(train_df=processed_train_df, test_df=X_test_processed_df)
+# model_monitoring.processed_feature_drift_report(train_df=processed_train_df, test_df=X_test_processed_df)
 
 # Target Drift
 # model_monitoring.target_drift_report(train_df=train_df, test_df=test_df)
