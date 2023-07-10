@@ -25,5 +25,6 @@ X_train_processed_df = mapping(X_train_processed_df)
 X_train_processed_df.to_csv('../data/X_train_processed.csv', index=False)
 # print(X_train_processed_df.head())
 # print(column_transformer.transformers_)
+print(column_transformer.get_feature_names_out())
 # encoder = column_transformer.transformers_[0][1].steps[0][1]
 # print(encoder.categories_)
