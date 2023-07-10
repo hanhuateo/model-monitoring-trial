@@ -77,18 +77,13 @@ class ModelMonitoring():
 
     def target_drift_report(self, train_df, test_df):
         target_drift_report = Report(metrics=[
-            ColumnDriftMetric(column_name='target'),
-            ColumnCorrelationsMetric(column_name='target'),
             ColumnDriftMetric(column_name='prediction'),
             ColumnCorrelationsMetric(column_name='prediction'),
-            TargetByFeaturesTable(),
         ])
         target_drift_report.run(reference_data=train_df, current_data=test_df)
         target_drift_report.save_html('../reports/target_drift_report.html')
 
     def processed_feature_drift_report(self, train_df, test_df):
-        self.column_mapping.categorical_features = []
-        self.column_mapping.numerical_features = []
         feature_drift_report = Report(metrics = [
             DataDriftTable(),
         ])
