@@ -3,11 +3,7 @@ from scipy import stats
 from evidently.metrics import DataDriftTable
 from evidently.metrics import ColumnDriftMetric
 from evidently.metrics import ColumnCorrelationsMetric
-from evidently.metrics import TargetByFeaturesTable
-import evidently.renderers.base_renderer as base_renderer
 from evidently.report import Report
-from evidently.metric_preset import TargetDriftPreset
-from evidently import ColumnMapping
 
 class ModelMonitoring():
     def __init__(self):
