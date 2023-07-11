@@ -40,4 +40,4 @@ processed_train_df = pd.read_csv("../data/X_train_processed.csv")
 # Target Drift
 # model_monitoring.prediction_drift_report(train_df=train_df.drop(columns=['target']), test_df=test_df.drop(columns=['target']))
 # print(RF_clf.feature_importances_)
-print(RF_clf.feature_names_in_)
+# print(RF_clf.feature_names_in_)
