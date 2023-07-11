@@ -85,12 +85,15 @@ class ModelMonitoring():
         prediction_drift_report.save_html('../reports/prediction_drift_report.html')
 
     def processed_feature_drift_report(self, train_df, test_df):
+        # print(self.stat_test_foreach_column)
         # columns_list = test_df.columns.tolist()
+        # print(columns_list)
         # stattest_dictionary = {}
         # for key, value in self.stat_test_foreach_column:
         #     for col in columns_list:
         #         if key.lower() in col.lower():
         #             stattest_dictionary.append({col:value})
+        
         feature_drift_report = Report(metrics = [
             DataDriftTable(),
         ])
