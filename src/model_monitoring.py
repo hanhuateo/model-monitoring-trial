@@ -84,6 +84,19 @@ class ModelMonitoring():
         prediction_drift_report.save_html('../reports/prediction_drift_report.html')
 
     def processed_feature_drift_report(self, train_df, test_df):
+        # categorical_features = []
+        # numerical_features = []
+        # column_mapping = ColumnMapping()
+        # print(test_df.columns)
+        # print(train_df.columns)
+        # for col in test_df.columns.tolist():
+        #     if col.startswith('categorical'):
+        #         categorical_features.append(col)
+        #     if col.startswith('numerical'):
+        #         numerical_features.append(col)
+        #     print(f"Column names are : {col}")
+        # column_mapping.categorical_features = categorical_features
+        # column_mapping.numerical_features = numerical_features
         feature_drift_report = Report(metrics = [
             DataDriftTable(),
         ])
