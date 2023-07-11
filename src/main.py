@@ -34,7 +34,7 @@ processed_train_df = pd.read_csv("../data/X_train_processed.csv")
 # model_monitoring.feature_drift_report(train_df=train_df, test_df=test_df)
 
 # Processed Feature Drift
-# model_monitoring.processed_feature_drift_report(train_df=processed_train_df, test_df=X_test_processed_df)
+model_monitoring.processed_feature_drift_report(train_df=processed_train_df, test_df=X_test_processed_df)
 
 # Target Drift
-model_monitoring.prediction_drift_report(train_df=train_df.drop(columns=['target']), test_df=test_df.drop(columns=['target']))
+# model_monitoring.prediction_drift_report(train_df=train_df.drop(columns=['target']), test_df=test_df.drop(columns=['target']))

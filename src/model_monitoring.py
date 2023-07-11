@@ -76,12 +76,12 @@ class ModelMonitoring():
         feature_drift_report.save_html('../reports/feature_drift_report.html')
 
     def prediction_drift_report(self, train_df, test_df):
-        target_drift_report = Report(metrics=[
+        prediction_drift_report = Report(metrics=[
             ColumnDriftMetric(column_name='prediction'),
             ColumnCorrelationsMetric(column_name='prediction'),
         ])
-        target_drift_report.run(reference_data=train_df, current_data=test_df)
-        target_drift_report.save_html('../reports/prediction_drift_report.html')
+        prediction_drift_report.run(reference_data=train_df, current_data=test_df)
+        prediction_drift_report.save_html('../reports/prediction_drift_report.html')
 
     def processed_feature_drift_report(self, train_df, test_df):
         feature_drift_report = Report(metrics = [
