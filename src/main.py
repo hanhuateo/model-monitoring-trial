@@ -20,6 +20,8 @@ y_test = test_df['Attrition']
 X_test_processed = column_transformer.transform(X_test)
 y_test_pred = RF_clf.predict(X_test_processed)
 y_test_pred_inverse = label_encoder.inverse_transform(y_test_pred)
+y_test_pred_prob = RF_clf.predict_proba(X_test_processed)[:1]
+print(f"y test prediction probability : {y_test_pred_prob}")
 test_df['prediction'] = y_test_pred_inverse
 test_df.rename(columns={'Attrition' : 'target'}, inplace=True)
 # X_test_processed_df = pd.DataFrame.from_records(X_test_processed)
