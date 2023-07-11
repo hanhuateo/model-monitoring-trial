@@ -70,7 +70,8 @@ class ModelMonitoring():
         categorical_column_dictionary = self.categorical_stat_test_algo(test_df, self.categorical_columns, len(test_df), categorical_column_dictionary)
         self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
         feature_drift_report = Report(metrics = [
-            DataDriftTable(per_column_stattest=self.stat_test_foreach_column),
+            # DataDriftTable(per_column_stattest=self.stat_test_foreach_column),
+            DataDriftTable()
         ])
         feature_drift_report.run(reference_data=train_df, current_data=test_df)
         feature_drift_report.save_html('../reports/feature_drift_report.html')
@@ -84,19 +85,12 @@ class ModelMonitoring():
         prediction_drift_report.save_html('../reports/prediction_drift_report.html')
 
     def processed_feature_drift_report(self, train_df, test_df):
-        # categorical_features = []
-        # numerical_features = []
-        # column_mapping = ColumnMapping()
-        # print(test_df.columns)
-        # print(train_df.columns)
-        # for col in test_df.columns.tolist():
-        #     if col.startswith('categorical'):
-        #         categorical_features.append(col)
-        #     if col.startswith('numerical'):
-        #         numerical_features.append(col)
-        #     print(f"Column names are : {col}")
-        # column_mapping.categorical_features = categorical_features
-        # column_mapping.numerical_features = numerical_features
+        # columns_list = test_df.columns.tolist()
+        # stattest_dictionary = {}
+        # for key, value in self.stat_test_foreach_column:
+        #     for col in columns_list:
+        #         if key.lower() in col.lower():
+        #             stattest_dictionary.append({col:value})
         feature_drift_report = Report(metrics = [
             DataDriftTable(),
         ])

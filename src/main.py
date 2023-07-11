@@ -32,7 +32,7 @@ train_df = pd.read_csv("../data/cleaned_employee_train.csv")
 processed_train_df = pd.read_csv("../data/X_train_processed.csv")
 
 # Feature Drift
-# model_monitoring.feature_drift_report(train_df=train_df, test_df=test_df)
+model_monitoring.feature_drift_report(train_df=train_df, test_df=test_df)
 
 # Processed Feature Drift
 model_monitoring.processed_feature_drift_report(train_df=processed_train_df, test_df=X_test_processed_df)
