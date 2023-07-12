@@ -72,9 +72,16 @@ class ModelMonitoring():
         feature_drift_report.run(reference_data=train_df, current_data=test_df)
         if format == 'html':
             feature_drift_report.save_html('../reports/feature_drift_report.html')
-        else:
+            return
+        elif format == 'json':
             feature_drift_report.save_json('../reports/feature_drift_report.json')
-        return feature_drift_report.as_dict()
+            return
+        elif format == 'dict':
+            feature_drift_dict = feature_drift_report.as_dict()
+            return feature_drift_dict
+        else:
+            feature_drift_dict = feature_drift_report.as_dict()
+            return
 
     def prediction_drift_report(self, train_df, test_df, format):
         prediction_drift_report = Report(metrics=[
@@ -86,4 +93,5 @@ class ModelMonitoring():
             prediction_drift_report.save_html('../reports/prediction_drift_report.html')
         else:
             prediction_drift_report.save_json('../reports/prediction_drift_report.json')
-        return prediction_drift_report.as_dict()    
+        return prediction_drift_report.as_dict()
+    

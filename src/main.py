@@ -25,7 +25,7 @@ test_df.rename(columns={'Attrition' : 'target'}, inplace=True)
 train_df = pd.read_csv("../data/cleaned_employee_train.csv")
 
 # Feature Drift
-# model_monitoring.feature_drift_report(train_df=train_df, test_df=test_df, 'html')
+model_monitoring.feature_drift_report(train_df=train_df, test_df=test_df, format='json')
 
 # Target Drift
 # model_monitoring.prediction_drift_report(train_df=train_df.drop(columns=['target']), test_df=test_df.drop(columns=['target']))
