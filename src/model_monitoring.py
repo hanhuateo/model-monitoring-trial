@@ -57,7 +57,7 @@ class ModelMonitoring():
                     column_dictionary.update({col:'wasserstein'})
         return column_dictionary
         
-    def feature_drift_report(self, train_df, test_df):
+    def feature_drift_report(self, train_df, test_df, format):
         self.numerical_columns = self.get_numerical_columns(test_df)
         self.categorical_columns = self.get_categorical_columns(test_df)
         numerical_column_dictionary = {}
@@ -70,28 +70,20 @@ class ModelMonitoring():
             DataDriftTable()
         ])
         feature_drift_report.run(reference_data=train_df, current_data=test_df)
-        feature_drift_report.save_html('../reports/feature_drift_report.html')
+        if format == 'html':
+            feature_drift_report.save_html('../reports/feature_drift_report.html')
+        else:
+            feature_drift_report.save_json('../reports/feature_drift_report.json')
+        return feature_drift_report.as_dict()
 
-    def prediction_drift_report(self, train_df, test_df):
+    def prediction_drift_report(self, train_df, test_df, format):
         prediction_drift_report = Report(metrics=[
             ColumnDriftMetric(column_name='prediction'),
             ColumnCorrelationsMetric(column_name='prediction'),
         ])
         prediction_drift_report.run(reference_data=train_df, current_data=test_df)
-        prediction_drift_report.save_html('../reports/prediction_drift_report.html')
-
-    def processed_feature_drift_report(self, train_df, test_df):
-        # print(self.stat_test_foreach_column)
-        # columns_list = test_df.columns.tolist()
-        # print(columns_list)
-        # stattest_dictionary = {}
-        # for key, value in self.stat_test_foreach_column:
-        #     for col in columns_list:
-        #         if key.lower() in col.lower():
-        #             stattest_dictionary.append({col:value})
-        
-        feature_drift_report = Report(metrics = [
-            DataDriftTable(),
-        ])
-        feature_drift_report.run(reference_data=train_df, current_data=test_df)
-        feature_drift_report.save_html('../reports/processed_feature_drift_report.html')
+        if format == 'html':
+            prediction_drift_report.save_html('../reports/prediction_drift_report.html')
+        else:
+            prediction_drift_report.save_json('../reports/prediction_drift_report.json')
+        return prediction_drift_report.as_dict()    
