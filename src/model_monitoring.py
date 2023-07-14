@@ -103,4 +103,4 @@ class ModelMonitoring():
         else:
             return 0
         
-    # def check_preprocessing(self, train_df, test_df):
+    # def check_preprocessing(self, train_df, test_df_processed):
