@@ -6,9 +6,9 @@ from evidently.metrics import ColumnCorrelationsMetric
 from evidently.report import Report
 
 class ModelMonitoring():
-    def __init__(self):
-        self.numerical_columns = []
-        self.categorical_columns = []
+    def __init__(self, train_df):
+        self.numerical_columns = self.get_numerical_columns(train_df)
+        self.categorical_columns = self.get_categorical_columns(train_df)
         self.stat_test_foreach_column = {}
         
     def get_numerical_columns(self, df):
@@ -58,8 +58,6 @@ class ModelMonitoring():
         return column_dictionary
         
     def feature_drift_report(self, train_df, test_df, format):
-        self.numerical_columns = self.get_numerical_columns(test_df)
-        self.categorical_columns = self.get_categorical_columns(test_df)
         numerical_column_dictionary = {}
         categorical_column_dictionary = {}
         numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)
@@ -95,3 +93,14 @@ class ModelMonitoring():
             prediction_drift_report.save_json('../reports/prediction_drift_report.json')
         return prediction_drift_report.as_dict()
     
+    def check_schema(self, train_df, test_df):
+        train_column_list = train_df.columns.tolist()
+        test_column_list = test_df.columns.tolist()
+        train_set = set(train_column_list)
+        test_set = set(test_column_list)
+        if (train_set == test_set):
+            return 1
+        else:
+            return 0
+        
+    # def check_preprocessing(self, train_df, test_df):

@@ -6,8 +6,6 @@ RF_clf = load('./model/RF_clf.joblib')
 column_transformer = load('./preprocessor/column_transformer.pkl')
 label_encoder = load("./preprocessor/label_encoder.pkl")
 
-model_monitoring = ModelMonitoring()
-
 test_df = pd.read_csv("../data/raw_split_data/employee_test.csv")
 # data cleaning
 test_df = data_cleaning(test_df)
@@ -24,8 +22,10 @@ test_df.rename(columns={'Attrition' : 'target'}, inplace=True)
 
 train_df = pd.read_csv("../data/cleaned_employee_train.csv")
 
+model_monitoring = ModelMonitoring(train_df)
+print(model_monitoring.categorical_columns)
 # Feature Drift
-model_monitoring.feature_drift_report(train_df=train_df, test_df=test_df, format='json')
+# model_monitoring.feature_drift_report(train_df=train_df, test_df=test_df, format='json')
 
 # Target Drift
 # model_monitoring.prediction_drift_report(train_df=train_df.drop(columns=['target']), test_df=test_df.drop(columns=['target']))
