@@ -10,7 +10,12 @@ class ModelMonitoring():
         self.numerical_columns = self.get_numerical_columns(train_df)
         self.categorical_columns = self.get_categorical_columns(train_df)
         self.stat_test_foreach_column = {}
+        self.columns_list = self.get_columns_list(train_df)
         
+    def get_columns_list(self, df):
+        columns_list = df.columns.tolist()
+        return columns_list
+    
     def get_numerical_columns(self, df):
         list_column_names = list(df.columns)
         numerical_list = []
@@ -103,4 +108,5 @@ class ModelMonitoring():
         else:
             return 0
         
-    # def check_preprocessing(self, train_df, test_df_processed):
+    # def determine_number_of_features_postprocessing(self, df):
+        
