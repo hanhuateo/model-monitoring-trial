@@ -5,6 +5,8 @@ from evidently.metrics import ColumnDriftMetric
 from evidently.metrics import ColumnCorrelationsMetric
 from evidently.metric_preset import DataQualityPreset
 from evidently.report import Report
+from evidently.test_suite import TestSuite
+from evidently.test_preset import DataQualityTestPreset, DataStabilityTestPreset
 
 class ModelMonitoring():
     def __init__(self, train_df):
@@ -63,7 +65,7 @@ class ModelMonitoring():
                     column_dictionary.update({col:'wasserstein'})
         return column_dictionary
         
-    def feature_drift_report(self, train_df, test_df, format='dict'):
+    def feature_drift_report(self, train_df, test_df, format):
         numerical_column_dictionary = {}
         categorical_column_dictionary = {}
         numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)
@@ -76,12 +78,9 @@ class ModelMonitoring():
         feature_drift_report.run(reference_data=train_df, current_data=test_df)
         if format == 'html':
             feature_drift_report.save_html('../reports/feature_drift_report.html')
-            return
-        elif format == 'json':
-            feature_drift_report.save_json('../reports/feature_drift_report.json')
-            return
         else:
-            return feature_drift_report.as_dict()
+            feature_drift_report.save_json('../reports/feature_drift_report.json')
+        return feature_drift_report.as_dict()
 
     def prediction_drift_report(self, train_df, test_df, format):
         prediction_drift_report = Report(metrics=[
@@ -95,7 +94,7 @@ class ModelMonitoring():
             prediction_drift_report.save_json('../reports/prediction_drift_report.json')
         return prediction_drift_report.as_dict()
     
-    def data_quality_report(self, train_df, test_df, format='dict'):
+    def data_quality_report(self, train_df, test_df, format):
         data_quality_report = Report(metrics=[
             DataQualityPreset()
         ])
@@ -106,7 +105,16 @@ class ModelMonitoring():
             data_quality_report.save_json('../reports/data_quality_report.json')
         return data_quality_report.as_dict()
 
-
+    def data_quality_test_suite(self, train_df, test_df, format):
+        data_quality_test_suite = TestSuite(tests=[
+            DataQualityTestPreset(),
+        ])
+        data_quality_test_suite.run(reference_data=train_df, current_data=test_df)
+        if format == 'html':
+            data_quality_test_suite.save_html('../reports/data_quality_test_suite.html')
+        else:
+            data_quality_test_suite.save_json('../reports/data_quality_test_suite.json')
+        return data_quality_test_suite.as_dict()
     
     def check_schema(self, train_df, test_df):
         train_column_list = train_df.columns.tolist()

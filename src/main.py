@@ -14,5 +14,9 @@ model_monitoring = ModelMonitoring(train_df.drop(columns=['target', 'prediction'
 # print(RF_clf.feature_importances_)
 # print(RF_clf.feature_names_in_)
 
-# Data Quality
-data_quality_dict = model_monitoring.data_quality_report(train_df=train_df.drop(columns=['target', 'prediction']), test_df=test_df, format='html')
+# Data Quality Report
+# data_quality_dict = model_monitoring.data_quality_report(train_df=train_df.drop(columns=['target', 'prediction']), test_df=test_df, format='html')
+
+# Data Quality Test Suite
+data_quality_test_dict = model_monitoring.data_quality_test_suite(train_df=train_df.drop(columns=['target', 'prediction']), test_df=test_df, format='html')
+print(data_quality_test_dict)
