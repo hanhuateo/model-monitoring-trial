@@ -18,5 +18,7 @@ model_monitoring = ModelMonitoring(train_df.drop(columns=['target', 'prediction'
 # data_quality_dict = model_monitoring.data_quality_report(train_df=train_df.drop(columns=['target', 'prediction']), test_df=test_df, format='html')
 
 # Data Quality Test Suite
-data_quality_test_dict = model_monitoring.data_quality_test_suite(train_df=train_df.drop(columns=['target', 'prediction']), test_df=test_df, format='html')
-print(data_quality_test_dict)
+# data_quality_test_dict = model_monitoring.data_quality_test_suite(train_df=train_df.drop(columns=['target', 'prediction']), test_df=test_df, format='html')
+# print(data_quality_test_dict)
+
+model_monitoring.check_schema_email_notify(train_df=train_df, test_df=test_df)

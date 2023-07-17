@@ -3,7 +3,6 @@ import numpy as np
 from joblib import load
 from train_model import data_cleaning
 from processed_feature_mapping import mapping
-from IPython.display import display
 
 df = pd.read_csv('../data/raw_split_data/employee_train.csv')
 column_transformer = load('./preprocessor/column_transformer.pkl')

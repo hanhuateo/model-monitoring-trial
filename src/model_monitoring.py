@@ -7,6 +7,8 @@ from evidently.metric_preset import DataQualityPreset
 from evidently.report import Report
 from evidently.test_suite import TestSuite
 from evidently.test_preset import DataQualityTestPreset, DataStabilityTestPreset
+from knockknock import desktop_sender, email_sender
+
 
 class ModelMonitoring():
     def __init__(self, train_df):
@@ -77,9 +79,9 @@ class ModelMonitoring():
         ])
         feature_drift_report.run(reference_data=train_df, current_data=test_df)
         if format == 'html':
-            feature_drift_report.save_html('../reports/feature_drift_report.html')
+            feature_drift_report.save_html('../html_reports/feature_drift_report.html')
         else:
-            feature_drift_report.save_json('../reports/feature_drift_report.json')
+            feature_drift_report.save_json('../json_reports/feature_drift_report.json')
         return feature_drift_report.as_dict()
 
     def prediction_drift_report(self, train_df, test_df, format):
@@ -89,9 +91,9 @@ class ModelMonitoring():
         ])
         prediction_drift_report.run(reference_data=train_df, current_data=test_df)
         if format == 'html':
-            prediction_drift_report.save_html('../reports/prediction_drift_report.html')
+            prediction_drift_report.save_html('../html_reports/prediction_drift_report.html')
         else:
-            prediction_drift_report.save_json('../reports/prediction_drift_report.json')
+            prediction_drift_report.save_json('../json_reports/prediction_drift_report.json')
         return prediction_drift_report.as_dict()
     
     def data_quality_report(self, train_df, test_df, format):
@@ -100,9 +102,9 @@ class ModelMonitoring():
         ])
         data_quality_report.run(reference_data=train_df, current_data=test_df)
         if format == 'html':
-            data_quality_report.save_html('../reports/data_quality_report.html')
+            data_quality_report.save_html('../html_reports/data_quality_report.html')
         else:
-            data_quality_report.save_json('../reports/data_quality_report.json')
+            data_quality_report.save_json('../json_reports/data_quality_report.json')
         return data_quality_report.as_dict()
 
     def data_quality_test_suite(self, train_df, test_df, format):
@@ -111,9 +113,9 @@ class ModelMonitoring():
         ])
         data_quality_test_suite.run(reference_data=train_df, current_data=test_df)
         if format == 'html':
-            data_quality_test_suite.save_html('../reports/data_quality_test_suite.html')
+            data_quality_test_suite.save_html('../html_reports/data_quality_test_suite.html')
         else:
-            data_quality_test_suite.save_json('../reports/data_quality_test_suite.json')
+            data_quality_test_suite.save_json('../json_reports/data_quality_test_suite.json')
         return data_quality_test_suite.as_dict()
     
     def check_schema(self, train_df, test_df):
@@ -125,11 +127,14 @@ class ModelMonitoring():
             return 1
         else:
             raise Exception("Data Schema has changed, do consider retraining model on new schema")
-        
-    # def check_one_hot_encoding(self, train_df, test_df, processed_test_df):
-    #     same_columns_flag = self.check_schema(train_df, test_df)
-    #     if (same_columns_flag == 0):
-    #         raise Exception("Train and Test dataframes do not have the same columns")
-    #     else:
-    #         for col in self.categorical_columns:
+
+    def check_schema_postprocessing(self, processed_train_df, processed_test_df):
+        processed_train_column_list = processed_train_df.columns.tolist()
+        processed_test_column_list = processed_test_df.tolist()
+        processed_train_set = set(processed_train_column_list)
+        processed_test_set = set(processed_test_column_list)
+        if (processed_train_set == processed_test_set):
+            return 1
+        else:
+            raise Exception("Processing pipeline has some issues, please check")
     

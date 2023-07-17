@@ -11,7 +11,6 @@ test_df = pd.read_csv("../data/raw_split_data/employee_test.csv")
 test_df = data_cleaning(test_df)
 # Data Preprocessing
 X_test = test_df.drop(columns=['Attrition'])
-X_test.to_csv('../data/cleaned_employee_test.csv', index=False)
 y_test = test_df['Attrition']
 X_test_processed = column_transformer.transform(X_test)
 X_test_processed = pd.DataFrame.from_records(X_test_processed)
@@ -23,3 +22,4 @@ y_test_pred_prob = RF_clf.predict_proba(X_test_processed)[:1]
 print(f"y test prediction probability : {y_test_pred_prob}")
 test_df['prediction'] = y_test_pred_inverse
 test_df.rename(columns={'Attrition' : 'target'}, inplace=True)
+test_df.to_csv('../data/cleaned_employee_test.csv', index=False)
