@@ -7,19 +7,12 @@ from evidently.metric_preset import DataQualityPreset
 from evidently.report import Report
 from evidently.test_suite import TestSuite
 from evidently.test_preset import DataQualityTestPreset, DataStabilityTestPreset
-from knockknock import desktop_sender, email_sender
-
 
 class ModelMonitoring():
     def __init__(self, train_df):
         self.numerical_columns = self.get_numerical_columns(train_df)
         self.categorical_columns = self.get_categorical_columns(train_df)
         self.stat_test_foreach_column = {}
-        self.columns_list = self.get_columns_list(train_df)
-        
-    def get_columns_list(self, df):
-        columns_list = df.columns.tolist()
-        return columns_list
     
     def get_numerical_columns(self, df):
         list_column_names = list(df.columns)
@@ -124,17 +117,81 @@ class ModelMonitoring():
         train_set = set(train_column_list)
         test_set = set(test_column_list)
         if (train_set == test_set):
+            print(f"train and test dataset have the same features")
             return 1
         else:
-            raise Exception("Data Schema has changed, do consider retraining model on new schema")
+            print(f"train and test dataset do not have the same features")
+            return 0
 
     def check_schema_postprocessing(self, processed_train_df, processed_test_df):
         processed_train_column_list = processed_train_df.columns.tolist()
-        processed_test_column_list = processed_test_df.tolist()
+        processed_test_column_list = processed_test_df.columns.tolist()
         processed_train_set = set(processed_train_column_list)
         processed_test_set = set(processed_test_column_list)
         if (processed_train_set == processed_test_set):
+            print(f"train and test dataset have the same processed features")
             return 1
         else:
-            raise Exception("Processing pipeline has some issues, please check")
+            print(f"train and test dataset do not have the same processed features")
+            raise 0
     
+    # def check_processing_validity(self, train_df, test_df, processed_train_df, processed_test_df):
+    #     check_schema_flag = self.check_schema(train_df, test_df)
+    #     if (check_schema_flag == 1):
+    #         pass
+    #     else:
+    #         print("training and production data schema does not match")
+    #         return
+    #     categorical_columns = self.categorical_columns
+    #     total_num_of_columns = len(train_df.columns)
+    #     print(f"total number of columns : {total_num_of_columns}")
+    #     total_num_of_processed_columns = len(processed_train_df.columns)
+    #     print(f"total number of processed columns : {total_num_of_processed_columns}")
+    #     for col in categorical_columns:
+    #         number_of_unique_values = train_df[col].nunique()
+    #         count_of_columns = total_num_of_columns + number_of_unique_values - 1
+    #         print(f"count of columns : {count_of_columns}")
+        
+    #     if (count_of_columns == total_num_of_processed_columns):
+    #         return 1
+    #     else:
+    #         return 0
+
+    def check_data_types(self, train_df, test_df):
+        columns_list = train_df.columns.tolist()
+        for col in columns_list:
+            if (train_df[col].dtype == test_df[col].dtype):
+                print(f"Data Type of {col} from both datasets are the same")
+                continue
+            else:
+                print(f"Column name is : {col}")
+                raise TypeError(f"Data Type of {col} in production does not match with training")
+            
+        return 1
+            
+    def replace_column_names(self, test_df):   
+        test_df.rename(columns=lambda s: s.replace(" ", "_" ), inplace=True)
+
+    def handle_missing_values(self, data_quality_report_json, method, test_df):
+        nans_by_columns_dict = data_quality_report_json['metrics'][0]['result']['current']['nans_by_columns']
+        columns_with_missing_values = []
+        # get columns with missing values
+        for key in nans_by_columns_dict.keys():
+            if nans_by_columns_dict[key] > 0:
+                columns_with_missing_values.append(key)
+            if nans_by_columns_dict[key] == 0:
+                continue
+        
+        # drop records with missing values
+        if method == 'delete':
+            test_df = test_df.dropna(subset=[columns_with_missing_values])
+        
+        # impute the records with missing values
+        if method == 'impute':
+            for col in columns_with_missing_values:
+                if test_df[col].dtype in [np.int64, float]:
+                    test_df[col].fillna(test_df[col].mean(), inplace=True)
+                if test_df[col].dtype in [object, 'category']:
+                    test_df[col].fillna(test_df[col].mode()[0], inplace=True)
+        
+        return test_df
