@@ -3,6 +3,7 @@ from scipy import stats
 from evidently.metrics import DataDriftTable
 from evidently.metrics import ColumnDriftMetric
 from evidently.metrics import ColumnCorrelationsMetric
+from evidently.metric_preset import DataQualityPreset
 from evidently.report import Report
 
 class ModelMonitoring():
@@ -62,7 +63,7 @@ class ModelMonitoring():
                     column_dictionary.update({col:'wasserstein'})
         return column_dictionary
         
-    def feature_drift_report(self, train_df, test_df, format):
+    def feature_drift_report(self, train_df, test_df, format='dict'):
         numerical_column_dictionary = {}
         categorical_column_dictionary = {}
         numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)
@@ -79,12 +80,8 @@ class ModelMonitoring():
         elif format == 'json':
             feature_drift_report.save_json('../reports/feature_drift_report.json')
             return
-        elif format == 'dict':
-            feature_drift_dict = feature_drift_report.as_dict()
-            return feature_drift_dict
         else:
-            feature_drift_dict = feature_drift_report.as_dict()
-            return
+            return feature_drift_report.as_dict()
 
     def prediction_drift_report(self, train_df, test_df, format):
         prediction_drift_report = Report(metrics=[
@@ -98,6 +95,19 @@ class ModelMonitoring():
             prediction_drift_report.save_json('../reports/prediction_drift_report.json')
         return prediction_drift_report.as_dict()
     
+    def data_quality_report(self, train_df, test_df, format='dict'):
+        data_quality_report = Report(metrics=[
+            DataQualityPreset()
+        ])
+        data_quality_report.run(reference_data=train_df, current_data=test_df)
+        if format == 'html':
+            data_quality_report.save_html('../reports/data_quality_report.html')
+        else:
+            data_quality_report.save_json('../reports/data_quality_report.json')
+        return data_quality_report.as_dict()
+
+
+    
     def check_schema(self, train_df, test_df):
         train_column_list = train_df.columns.tolist()
         test_column_list = test_df.columns.tolist()
@@ -106,7 +116,12 @@ class ModelMonitoring():
         if (train_set == test_set):
             return 1
         else:
-            return 0
+            raise Exception("Data Schema has changed, do consider retraining model on new schema")
         
-    # def determine_number_of_features_postprocessing(self, df):
-        
+    # def check_one_hot_encoding(self, train_df, test_df, processed_test_df):
+    #     same_columns_flag = self.check_schema(train_df, test_df)
+    #     if (same_columns_flag == 0):
+    #         raise Exception("Train and Test dataframes do not have the same columns")
+    #     else:
+    #         for col in self.categorical_columns:
+    
