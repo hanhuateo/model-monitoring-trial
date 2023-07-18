@@ -98,9 +98,10 @@ class ModelMonitoring():
         data_quality_report.run(reference_data=train_df, current_data=test_df)
         if format == 'html':
             data_quality_report.save_html('../html_reports/data_quality_report.html')
+            return data_quality_report
         else:
             data_quality_report.save_json('../json_reports/data_quality_report.json')
-        return data_quality_report.as_dict()
+            return data_quality_report.as_dict()
 
     def data_quality_test_suite(self, train_df, test_df, format):
         data_quality_test_suite = TestSuite(tests=[
@@ -164,14 +165,13 @@ class ModelMonitoring():
         columns_list = train_df.columns.tolist()
         for col in columns_list:
             if (train_df[col].dtype == test_df[col].dtype):
-                print(f"Data Type of {col} from both datasets are the same")
+                # print(f"Data Type of {col} from both datasets are the same")
                 continue
             else:
                 print(f"Column name is : {col}")
                 raise TypeError(f"Data Type of {col} in production does not match with training")
-            
-        return 1
-            
+        print(f"The data types for all columns from both datasets are the same")
+
     def replace_column_names(self, df):   
         df.rename(columns=lambda s: s.replace(" ", "_" ), inplace=True)
 
@@ -213,3 +213,10 @@ class ModelMonitoring():
                 threaded=True,
             )
             while toast.notification_active(): time.sleep(0.1)
+
+    def check_bad_data(self, df):
+        df = df.replace(['?', '-'], np.nan)
+        return df
+    
+    def check(self):
+        pass
