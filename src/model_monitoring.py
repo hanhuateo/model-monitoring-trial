@@ -103,6 +103,10 @@ class ModelMonitoring():
             data_quality_report.save_json('../json_reports/data_quality_report.json')
             return data_quality_report.as_dict()
     
+
+
+
+
     def check_schema(self, train_df, test_df):
         train_column_list = train_df.columns.tolist()
         test_column_list = test_df.columns.tolist()
