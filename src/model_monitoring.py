@@ -102,17 +102,6 @@ class ModelMonitoring():
         else:
             data_quality_report.save_json('../json_reports/data_quality_report.json')
             return data_quality_report.as_dict()
-
-    def data_quality_test_suite(self, train_df, test_df, format):
-        data_quality_test_suite = TestSuite(tests=[
-            DataQualityTestPreset(),
-        ])
-        data_quality_test_suite.run(reference_data=train_df, current_data=test_df)
-        if format == 'html':
-            data_quality_test_suite.save_html('../html_reports/data_quality_test_suite.html')
-        else:
-            data_quality_test_suite.save_json('../json_reports/data_quality_test_suite.json')
-        return data_quality_test_suite.as_dict()
     
     def check_schema(self, train_df, test_df):
         train_column_list = train_df.columns.tolist()
