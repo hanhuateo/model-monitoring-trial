@@ -7,6 +7,8 @@ from evidently.metric_preset import DataQualityPreset
 from evidently.report import Report
 from evidently.test_suite import TestSuite
 from evidently.test_preset import DataQualityTestPreset, DataStabilityTestPreset
+from win10toast import ToastNotifier
+import time
 
 class ModelMonitoring():
     def __init__(self, train_df):
@@ -196,3 +198,18 @@ class ModelMonitoring():
                     test_df[col].fillna(test_df[col].mode()[0], inplace=True)
         
         return test_df
+
+    def notify_schema_change(self, train_df, test_df):
+        check_schema_flag = self.check_schema(train_df=train_df, test_df=test_df)
+        if check_schema_flag == 1:
+            return
+        else:
+            toast = ToastNotifier()
+            toast.show_toast(
+                "Schema Change",
+                "There is a change in the schema, do consider retraining for bettter model",
+                duration = 20,
+                icon_path=None,
+                threaded=True,
+            )
+            while toast.notification_active(): time.sleep(0.1)
