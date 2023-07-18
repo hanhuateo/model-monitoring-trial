@@ -205,11 +205,8 @@ class ModelMonitoring():
                 icon_path=None,
                 threaded=True,
             )
-            while toast.notification_active(): time.sleep(0.1)
+        return 
 
-    def check_bad_data(self, df):
+    def handle_bad_data(self, df):
         df = df.replace(['?', '-'], np.nan)
         return df
-    
-    def check(self):
-        pass
