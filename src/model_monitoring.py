@@ -135,27 +135,28 @@ class ModelMonitoring():
             print(f"train and test dataset do not have the same processed features")
             raise 0
     
-    # def check_processing_validity(self, train_df, test_df, processed_train_df, processed_test_df):
-    #     check_schema_flag = self.check_schema(train_df, test_df)
-    #     if (check_schema_flag == 1):
-    #         pass
-    #     else:
-    #         print("training and production data schema does not match")
-    #         return
-    #     categorical_columns = self.categorical_columns
-    #     total_num_of_columns = len(train_df.columns)
-    #     print(f"total number of columns : {total_num_of_columns}")
-    #     total_num_of_processed_columns = len(processed_train_df.columns)
-    #     print(f"total number of processed columns : {total_num_of_processed_columns}")
-    #     for col in categorical_columns:
-    #         number_of_unique_values = train_df[col].nunique()
-    #         count_of_columns = total_num_of_columns + number_of_unique_values - 1
-    #         print(f"count of columns : {count_of_columns}")
+    def check_processing_validity(self, train_df, test_df, processed_train_df, processed_test_df):
+        check_schema_flag = self.check_schema(train_df, test_df)
+        if (check_schema_flag == 1):
+            pass
+        else:
+            print("training and production data schema does not match")
+            return
+        categorical_columns = self.categorical_columns
+        total_num_of_columns = len(train_df.columns)
+        print(f"total number of columns : {total_num_of_columns}")
+        total_num_of_processed_columns = len(processed_train_df.columns)
+        print(f"total number of processed columns : {total_num_of_processed_columns}")
+        count_of_columns = total_num_of_columns
+        for col in categorical_columns:
+            number_of_unique_values = train_df[col].nunique()
+            count_of_columns = count_of_columns + number_of_unique_values - 1
+            print(f"count of columns : {count_of_columns}")
         
-    #     if (count_of_columns == total_num_of_processed_columns):
-    #         return 1
-    #     else:
-    #         return 0
+        if (count_of_columns == total_num_of_processed_columns):
+            return 1
+        else:
+            return 0
 
     def check_data_types(self, train_df, test_df):
         columns_list = train_df.columns.tolist()
@@ -169,8 +170,8 @@ class ModelMonitoring():
             
         return 1
             
-    def replace_column_names(self, test_df):   
-        test_df.rename(columns=lambda s: s.replace(" ", "_" ), inplace=True)
+    def replace_column_names(self, df):   
+        df.rename(columns=lambda s: s.replace(" ", "_" ), inplace=True)
 
     def handle_missing_values(self, data_quality_report_json, method, test_df):
         nans_by_columns_dict = data_quality_report_json['metrics'][0]['result']['current']['nans_by_columns']
