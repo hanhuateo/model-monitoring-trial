@@ -211,7 +211,7 @@ class ModelMonitoring():
             newmail.Subject= 'Testing Mail'
             newmail.To='hanhuateo@gmail.com'
             # newmail.CC='xyz@gmail.com'
-            newmail.Body= 'Hello, this is a test email to showcase how to send emails from Python and Outlook.'
+            newmail.Body= 'Hello, there is a change in the incoming of features for production data, retraining will be done within the hour.'
             newmail.Send()
         return 
 
