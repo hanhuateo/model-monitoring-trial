@@ -212,10 +212,10 @@ class ModelMonitoring():
             ol = win32com.client.Dispatch('Outlook.Application')
             olmailitem = 0x0
             newmail=ol.CreateItem(olmailitem)
-            newmail.Subject= 'Testing Mail'
+            newmail.Subject= 'Change in schema'
             newmail.To='hanhuateo@gmail.com'
             # newmail.CC='xyz@gmail.com'
-            newmail.Body= 'Hello, there is a change in the incoming of features for production data, retraining will be done within the hour.'
+            newmail.Body= 'Hello, there is a change in the incoming of features for production data, retraining will commence.'
             newmail.Send()
             # insert retrain model here
         return 
@@ -231,7 +231,7 @@ class ModelMonitoring():
         ol = win32com.client.Dispatch('Outlook.Application')
         olmailitem = 0x0
         newmail=ol.CreateItem(olmailitem)
-        newmail.Subject= 'Testing Mail'
+        newmail.Subject= 'Re-training of model'
         newmail.To='hanhuateo@gmail.com'
         # newmail.CC='xyz@gmail.com'
         newmail.Body= 'Hello, retraining of model has commenced.'
