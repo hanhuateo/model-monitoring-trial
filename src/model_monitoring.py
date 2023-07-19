@@ -9,12 +9,16 @@ from evidently.test_suite import TestSuite
 from evidently.test_preset import DataQualityTestPreset, DataStabilityTestPreset
 from win10toast import ToastNotifier
 import win32com.client
+from joblib import load
 
 class ModelMonitoring():
     def __init__(self, train_df):
         self.numerical_columns = self.get_numerical_columns(train_df)
         self.categorical_columns = self.get_categorical_columns(train_df)
         self.stat_test_foreach_column = {}
+        self.RF_clf = load('./model/RF_clf.joblib')
+        self.column_transformer = load('./preprocessor/column_transformer.pkl')
+        self.label_encoder = load('./preprocessor/label_encoder.pkl')
     
     def get_numerical_columns(self, df):
         list_column_names = list(df.columns)
@@ -213,8 +217,23 @@ class ModelMonitoring():
             # newmail.CC='xyz@gmail.com'
             newmail.Body= 'Hello, there is a change in the incoming of features for production data, retraining will be done within the hour.'
             newmail.Send()
+            # insert retrain model here
         return 
 
     def handle_bad_data(self, df):
         df = df.replace(['?', '-'], np.nan)
         return df
+    
+    def retrain_model(self, new_data_df):
+        columns_list = new_data_df.columns_tolist()
+
+    def notify_retrain_model(self):
+        ol = win32com.client.Dispatch('Outlook.Application')
+        olmailitem = 0x0
+        newmail=ol.CreateItem(olmailitem)
+        newmail.Subject= 'Testing Mail'
+        newmail.To='hanhuateo@gmail.com'
+        # newmail.CC='xyz@gmail.com'
+        newmail.Body= 'Hello, retraining of model has commenced.'
+        newmail.Send()
+        
