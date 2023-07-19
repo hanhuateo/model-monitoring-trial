@@ -1,15 +1,12 @@
 import pandas as pd
-import numpy as np
 from model_monitoring import ModelMonitoring
-from processed_feature_mapping import mapping
-from joblib import load
 
 train_df = pd.read_csv("../data/cleaned_employee_train.csv")
 test_df = pd.read_csv("../data/cleaned_employee_test.csv")
 processed_train_df = pd.read_csv("../data/X_train_processed.csv")
 processed_test_df = pd.read_csv("../data/X_test_processed.csv")
 model_monitoring = ModelMonitoring(train_df)
-
+model_monitoring.feature_drift_report(train_df, test_df, 'html')
 # data_train = {
 #     'Feature 1': [1, 2, 3, 4, 5],
 #     'Feature 2': [6, 7, 8, 9, 10],
@@ -42,7 +39,7 @@ model_monitoring = ModelMonitoring(train_df)
 
 
 # Feature Drift
-model_monitoring.feature_drift_report(train_df=train_df, test_df=test_df, format='html')
+# model_monitoring.feature_drift_report(train_df=train_df, test_df=test_df, format='html')
 
 # Target Drift
 # model_monitoring.prediction_drift_report(train_df=train_df.drop(columns=['target']), test_df=test_df.drop(columns=['target']))

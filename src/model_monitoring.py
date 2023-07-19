@@ -65,13 +65,17 @@ class ModelMonitoring():
                 else:
                     column_dictionary.update({col:'wasserstein'})
         return column_dictionary
-        
-    def feature_drift_report(self, train_df, test_df, format):
+    
+    def set_stat_test_foreach_column(self, test_df):
         numerical_column_dictionary = {}
         categorical_column_dictionary = {}
         numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)
         categorical_column_dictionary = self.categorical_stat_test_algo(test_df, self.categorical_columns, len(test_df), categorical_column_dictionary)
         self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
+        print(self.stat_test_foreach_column)
+
+    def feature_drift_report(self, train_df, test_df, format):
+        self.set_stat_test_foreach_column(test_df)
         feature_drift_report = Report(metrics = [
             # DataDriftTable(per_column_stattest=self.stat_test_foreach_column),
             DataDriftTable()
