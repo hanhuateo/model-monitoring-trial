@@ -8,7 +8,7 @@ from evidently.report import Report
 from evidently.test_suite import TestSuite
 from evidently.test_preset import DataQualityTestPreset, DataStabilityTestPreset
 from win10toast import ToastNotifier
-import time
+import win32com.client
 
 class ModelMonitoring():
     def __init__(self, train_df):
@@ -197,14 +197,22 @@ class ModelMonitoring():
         if check_schema_flag == 1:
             return
         else:
-            toast = ToastNotifier()
-            toast.show_toast(
-                "Schema Change",
-                "There is a change in the schema, do consider retraining for bettter model",
-                duration = 20,
-                icon_path=None,
-                threaded=True,
-            )
+            # toast = ToastNotifier()
+            # toast.show_toast(
+            #     "Schema Change",
+            #     "There is a change in the schema, do consider retraining for bettter model",
+            #     duration = 20,
+            #     icon_path=None,
+            #     threaded=True,
+            # )
+            ol = win32com.client.Dispatch('Outlook.Application')
+            olmailitem = 0x0
+            newmail=ol.CreateItem(olmailitem)
+            newmail.Subject= 'Testing Mail'
+            newmail.To='hanhuateo@gmail.com'
+            # newmail.CC='xyz@gmail.com'
+            newmail.Body= 'Hello, this is a test email to showcase how to send emails from Python and Outlook.'
+            newmail.Send()
         return 
 
     def handle_bad_data(self, df):
