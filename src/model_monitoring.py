@@ -96,18 +96,6 @@ class ModelMonitoring():
             prediction_drift_report.save_json('../json_reports/prediction_drift_report.json')
         return prediction_drift_report.as_dict()
     
-    def data_quality_report(self, train_df, test_df, format):
-        data_quality_report = Report(metrics=[
-            DataQualityPreset()
-        ])
-        data_quality_report.run(reference_data=train_df, current_data=test_df)
-        if format == 'html':
-            data_quality_report.save_html('../html_reports/data_quality_report.html')
-            return data_quality_report
-        else:
-            data_quality_report.save_json('../json_reports/data_quality_report.json')
-            return data_quality_report.as_dict()
-    
 
 
 
