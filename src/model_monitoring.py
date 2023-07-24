@@ -16,9 +16,6 @@ class ModelMonitoring():
         self.numerical_columns = self.get_numerical_columns(train_df)
         self.categorical_columns = self.get_categorical_columns(train_df)
         self.stat_test_foreach_column = {}
-        self.RF_clf = load('./model/RF_clf.joblib')
-        self.column_transformer = load('./preprocessor/column_transformer.pkl')
-        self.label_encoder = load('./preprocessor/label_encoder.pkl')
     
     def get_numerical_columns(self, df):
         list_column_names = list(df.columns)
@@ -77,8 +74,8 @@ class ModelMonitoring():
     def feature_drift_report(self, train_df, test_df, format):
         self.set_stat_test_foreach_column(test_df)
         feature_drift_report = Report(metrics = [
-            # DataDriftTable(per_column_stattest=self.stat_test_foreach_column),
-            DataDriftTable()
+            DataDriftTable(per_column_stattest=self.stat_test_foreach_column),
+            # DataDriftTable()
         ])
         feature_drift_report.run(reference_data=train_df, current_data=test_df)
         if format == 'html':
@@ -137,30 +134,7 @@ class ModelMonitoring():
             return 1
         else:
             print(f"train and test dataset do not have the same processed features")
-            raise 0
-    
-    def check_processing_validity(self, train_df, test_df, processed_train_df, processed_test_df):
-        check_schema_flag = self.check_schema(train_df, test_df)
-        if (check_schema_flag == 1):
-            pass
-        else:
-            print("training and production data schema does not match")
-            return
-        categorical_columns = self.categorical_columns
-        total_num_of_columns = len(train_df.columns)
-        print(f"total number of columns : {total_num_of_columns}")
-        total_num_of_processed_columns = len(processed_train_df.columns)
-        print(f"total number of processed columns : {total_num_of_processed_columns}")
-        count_of_columns = total_num_of_columns
-        for col in categorical_columns:
-            number_of_unique_values = train_df[col].nunique()
-            count_of_columns = count_of_columns + number_of_unique_values - 1
-            print(f"count of columns : {count_of_columns}")
-        
-        if (count_of_columns == total_num_of_processed_columns):
-            return 1
-        else:
-            return 0
+            raise 0    
 
     def check_data_types(self, train_df, test_df):
         columns_list = train_df.columns.tolist()
@@ -175,30 +149,6 @@ class ModelMonitoring():
 
     def replace_column_names(self, df):   
         df.rename(columns=lambda s: s.replace(" ", "_" ), inplace=True)
-
-    def handle_missing_values(self, data_quality_report_json, method, test_df):
-        nans_by_columns_dict = data_quality_report_json['metrics'][0]['result']['current']['nans_by_columns']
-        columns_with_missing_values = []
-        # get columns with missing values
-        for key in nans_by_columns_dict.keys():
-            if nans_by_columns_dict[key] > 0:
-                columns_with_missing_values.append(key)
-            if nans_by_columns_dict[key] == 0:
-                continue
-        
-        # drop records with missing values
-        if method == 'delete':
-            test_df = test_df.dropna(subset=[columns_with_missing_values])
-        
-        # impute the records with missing values
-        if method == 'impute':
-            for col in columns_with_missing_values:
-                if test_df[col].dtype in [np.int64, float]:
-                    test_df[col].fillna(test_df[col].mean(), inplace=True)
-                if test_df[col].dtype in [object, 'category']:
-                    test_df[col].fillna(test_df[col].mode()[0], inplace=True)
-        
-        return test_df
 
     def notify_schema_change(self, train_df, test_df):
         check_schema_flag = self.check_schema(train_df=train_df, test_df=test_df)
@@ -227,17 +177,16 @@ class ModelMonitoring():
     def handle_bad_data(self, df):
         df = df.replace(['?', '-'], np.nan)
         return df
-    
-    def retrain_model(self, new_data_df):
-        columns_list = new_data_df.columns_tolist()
 
-    def notify_retrain_model(self):
-        ol = win32com.client.Dispatch('Outlook.Application')
-        olmailitem = 0x0
-        newmail=ol.CreateItem(olmailitem)
-        newmail.Subject= 'Re-training of model'
-        newmail.To='hanhuateo@gmail.com'
-        # newmail.CC='xyz@gmail.com'
-        newmail.Body= 'Hello, retraining of model has commenced.'
-        newmail.Send()
-        
+    def data_check(self, train_df, test_df, processed_train_df, processed_test_df):
+        self.replace_column_names(test_df)
+        test_df = self.handle_bad_data(test_df)
+        check_schema_flag = self.check_schema(train_df, test_df)
+        check_data_type_flag = self.check_data_types(train_df, test_df)
+        check_processed_schema_flag = self.check_schema_postprocessing(processed_train_df, processed_test_df)
+        if check_data_type_flag == 0:
+            print(f"there is a problem with the data types of the incoming data")
+        if check_processed_schema_flag == 0:
+            print(f"there is a problem with the preprocessing of the incoming data")
+        if check_schema_flag == 0:
+            print(f"there is a change in the schema of the incoming data")
