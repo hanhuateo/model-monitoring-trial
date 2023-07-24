@@ -3,13 +3,8 @@ from scipy import stats
 from evidently.metrics import DataDriftTable
 from evidently.metrics import ColumnDriftMetric
 from evidently.metrics import ColumnCorrelationsMetric
-from evidently.metric_preset import DataQualityPreset
 from evidently.report import Report
-from evidently.test_suite import TestSuite
-from evidently.test_preset import DataQualityTestPreset, DataStabilityTestPreset
-from win10toast import ToastNotifier
 import win32com.client
-from joblib import load
 
 class ModelMonitoring():
     def __init__(self, train_df):
