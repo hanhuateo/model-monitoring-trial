@@ -4,7 +4,7 @@ from evidently.metrics import DataDriftTable
 from evidently.metrics import ColumnDriftMetric
 from evidently.metrics import ColumnCorrelationsMetric
 from evidently.report import Report
-import win32com.client
+# import win32com.client
 
 class ModelMonitoring():
     def __init__(self, train_df):
@@ -133,29 +133,29 @@ class ModelMonitoring():
     def replace_column_names(self, df):   
         df.rename(columns=lambda s: s.replace(" ", "_" ), inplace=True)
 
-    def notify_schema_change(self, train_df, test_df):
-        check_schema_flag = self.check_schema(train_df=train_df, test_df=test_df)
-        if check_schema_flag == 1:
-            return
-        else:
-            # toast = ToastNotifier()
-            # toast.show_toast(
-            #     "Schema Change",
-            #     "There is a change in the schema, do consider retraining for bettter model",
-            #     duration = 20,
-            #     icon_path=None,
-            #     threaded=True,
-            # )
-            ol = win32com.client.Dispatch('Outlook.Application')
-            olmailitem = 0x0
-            newmail=ol.CreateItem(olmailitem)
-            newmail.Subject= 'Change in schema'
-            newmail.To='hanhuateo@gmail.com'
-            # newmail.CC='xyz@gmail.com'
-            newmail.Body= 'Hello, there is a change in the incoming of features for production data, retraining will commence.'
-            newmail.Send()
-            # insert retrain model here
-        return 
+    # def notify_schema_change(self, train_df, test_df):
+    #     check_schema_flag = self.check_schema(train_df=train_df, test_df=test_df)
+    #     if check_schema_flag == 1:
+    #         return
+    #     else:
+    #         # toast = ToastNotifier()
+    #         # toast.show_toast(
+    #         #     "Schema Change",
+    #         #     "There is a change in the schema, do consider retraining for bettter model",
+    #         #     duration = 20,
+    #         #     icon_path=None,
+    #         #     threaded=True,
+    #         # )
+    #         ol = win32com.client.Dispatch('Outlook.Application')
+    #         olmailitem = 0x0
+    #         newmail=ol.CreateItem(olmailitem)
+    #         newmail.Subject= 'Change in schema'
+    #         newmail.To='hanhuateo@gmail.com'
+    #         # newmail.CC='xyz@gmail.com'
+    #         newmail.Body= 'Hello, there is a change in the incoming of features for production data, retraining will commence.'
+    #         newmail.Send()
+    #         # insert retrain model here
+    #     return 
 
     def handle_bad_data(self, df):
         df = df.replace(['?', '-'], np.nan)
