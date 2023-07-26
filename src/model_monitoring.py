@@ -4,7 +4,7 @@ from evidently.metrics import DataDriftTable
 from evidently.metrics import ColumnDriftMetric
 from evidently.metrics import ColumnCorrelationsMetric
 from evidently.report import Report
-from auto_statstest import StatsTest
+# from auto_statstest import StatsTest
 # import win32com.client
 
 class ModelMonitoring():
