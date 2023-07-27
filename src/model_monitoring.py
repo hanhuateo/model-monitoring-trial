@@ -59,19 +59,26 @@ class ModelMonitoring():
                     column_dictionary.update({col:'wasserstein'})
         return column_dictionary
     
-    def set_stat_test_foreach_column(self, test_df):
-        numerical_column_dictionary = {}
-        categorical_column_dictionary = {}
-        numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)
-        categorical_column_dictionary = self.categorical_stat_test_algo(test_df, self.categorical_columns, len(test_df), categorical_column_dictionary)
-        self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
-        # print(self.stat_test_foreach_column)
+    def set_stat_test_foreach_column(self, test_df, customise = False):
+        customise = customise
+        if (customise == False):
+            numerical_column_dictionary = {}
+            categorical_column_dictionary = {}
+            numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)
+            categorical_column_dictionary = self.categorical_stat_test_algo(test_df, self.categorical_columns, len(test_df), categorical_column_dictionary)
+            self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
+            # print(self.stat_test_foreach_column)
+        # else:
+        #     columns_list = test_df.columns.tolist()
+            
+        #     for col in columns_list:
 
+    # Available stattests: ['anderson', 'chisquare', 'cramer_von_mises', 'ed', 'es', 'fisher_exact', 'g_test', 'hellinger', 'jensenshannon', 'kl_div', 'ks', 'mannw', 'emperical_mmd', 'psi', 't_test', 'perc_text_content_drift', 'abs_text_content_drift', 'TVD', 'wasserstein', 'z']
     def feature_drift_report(self, train_df, test_df, format):
         self.set_stat_test_foreach_column(test_df)
         feature_drift_report = Report(metrics = [
-            DataDriftTable(per_column_stattest=self.stat_test_foreach_column),
-            # DataDriftTable()
+            # DataDriftTable(per_column_stattest=self.stat_test_foreach_column),
+            DataDriftTable(cat_stattest='l')
         ])
         feature_drift_report.run(reference_data=train_df, current_data=test_df)
         if format == 'html':
