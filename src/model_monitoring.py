@@ -72,11 +72,14 @@ class ModelMonitoring():
             columns_list = test_df.columns.tolist()
             stat_test_list = ['anderson', 'chisquare', 'cramer_von_mises', 'ed', 'es', 'fisher_exact', 'g_test',
                               'hellinger', 'jensenshannon', 'kl_div', 'ks', 'mannw', 'emperical_mmd', 'psi', 't_test', 
-                              'perc_text_content_drift', 'abs_text_content_drift', 'TVD', 'wasserstein', 'z']
+                              'TVD', 'wasserstein', 'z']
             print("The available stats tests are: \n")
-            print("anderson, chisquare, cramer_von_mises, ed, es, fisher_exact, g_test")
-            print("hellinger, jensenshannon, kl_div, ks, mannw, emperical_mmd, psi, t_test")
-            print("perc_text_content_drift, abs_text_content_drift, TVD, wasserstein, z")
+            print("For categorical: ")
+            print("chisquare, z, fisher_exact, g_test, TVD")
+            print("For numerical: ")
+            print("ks, wasserstein, anderson, cramer_von_mises, mannw, ed, es, t_test, emperical_mmd")
+            print("For both categorical and numerical: ")
+            print("kl_div, psi, jensenshannon, hellinger")
             print("for more information on the stats test, please refer to: \n")
             print("https://docs.evidentlyai.com/user-guide/customization/options-for-statistical-tests")
             for col in columns_list:
