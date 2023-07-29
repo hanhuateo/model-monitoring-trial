@@ -112,9 +112,18 @@ class ModelMonitoring():
         return feature_drift_report.as_dict()
 
     def prediction_drift_report(self, train_df, test_df, format):
+        print("The available stats tests are: \n")
+        print("For categorical: ")
+        print("chisquare, z, fisher_exact, g_test, TVD")
+        print("For numerical: ")
+        print("ks, wasserstein, anderson, cramer_von_mises, mannw, ed, es, t_test, emperical_mmd")
+        print("For both categorical and numerical: ")
+        print("kl_div, psi, jensenshannon, hellinger")
+        stat_test = input(f"What is your stat test of choice?")
+        stat_test_threshold = input(f"What is the threshold for your stat test?")
         prediction_drift_report = Report(metrics=[
-            ColumnDriftMetric(column_name='prediction'),
-            ColumnCorrelationsMetric(column_name='prediction'),
+            ColumnDriftMetric(column_name='prediction', stattest=stat_test, 
+                              stattest_threshold=stat_test_threshold),
         ])
         prediction_drift_report.run(reference_data=train_df, current_data=test_df)
         if format == 'html':
