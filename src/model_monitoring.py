@@ -88,14 +88,11 @@ class ModelMonitoring():
                 stat_test_choice = input(f"for column {col}, input your stat test")
                 if stat_test_choice not in stat_test_list:
                     print("stat test currently not available in this version of evidentlyAI")
+                    break
                 else:
                     self.stat_test_foreach_column.update({col : stat_test_choice})
-    
-    def set_threshold_foreach_column_stat_test(self, test_df):
-        columns_list = test_df.columns.tolist()
-        for col in columns_list:
-            stat_test_threshold = input(f"for column {col}, input your stat test threshold")
-            self.threshold_foreach_column_stat_test.update({col : stat_test_threshold})
+                stat_test_threshold = input(f"for column {col}, input your stat test threshold")
+                self.threshold_foreach_column_stat_test.update({col : stat_test_threshold})
     
     def feature_drift_report(self, train_df, test_df, format):
         print("do you want to customise the stat test for each column?")
@@ -103,7 +100,6 @@ class ModelMonitoring():
         customise = input("Choice:")
         print(f"customise in feature_drift_report : {customise}")
         self.set_stat_test_foreach_column(test_df, customise)
-        self.set_threshold_foreach_column_stat_test(test_df)
         feature_drift_report = Report(metrics = [
             DataDriftTable(per_column_stattest=self.stat_test_foreach_column,
                            per_column_stattest_threshold=self.threshold_foreach_column_stat_test),
