@@ -61,14 +61,15 @@ class ModelMonitoring():
     
     def set_stat_test_foreach_column(self, test_df, customise = False):
         customise = customise
-        if (customise == False):
+        print(f"customise in set_stat_test_foreach_column : {customise}")
+        if (customise == 'False'):
             numerical_column_dictionary = {}
             categorical_column_dictionary = {}
             numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)
             categorical_column_dictionary = self.categorical_stat_test_algo(test_df, self.categorical_columns, len(test_df), categorical_column_dictionary)
             self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
             # print(self.stat_test_foreach_column)
-        else:
+        if (customise == 'True'):
             columns_list = test_df.columns.tolist()
             stat_test_list = ['anderson', 'chisquare', 'cramer_von_mises', 'ed', 'es', 'fisher_exact', 'g_test',
                               'hellinger', 'jensenshannon', 'kl_div', 'ks', 'mannw', 'emperical_mmd', 'psi', 't_test', 
@@ -97,6 +98,7 @@ class ModelMonitoring():
         print("do you want to customise the stat test for each column?")
         print("if yes, input True, else input False")
         customise = input("Choice:")
+        print(f"customise in feature_drift_report : {customise}")
         self.set_stat_test_foreach_column(test_df, customise)
         feature_drift_report = Report(metrics = [
             DataDriftTable(per_column_stattest=self.stat_test_foreach_column),
