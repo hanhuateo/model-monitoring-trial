@@ -68,17 +68,35 @@ class ModelMonitoring():
             categorical_column_dictionary = self.categorical_stat_test_algo(test_df, self.categorical_columns, len(test_df), categorical_column_dictionary)
             self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
             # print(self.stat_test_foreach_column)
-        # else:
-        #     columns_list = test_df.columns.tolist()
-            
-        #     for col in columns_list:
+        else:
+            columns_list = test_df.columns.tolist()
+            stat_test_list = ['anderson', 'chisquare', 'cramer_von_mises', 'ed', 'es', 'fisher_exact', 'g_test',
+                              'hellinger', 'jensenshannon', 'kl_div', 'ks', 'mannw', 'emperical_mmd', 'psi', 't_test', 
+                              'perc_text_content_drift', 'abs_text_content_drift', 'TVD', 'wasserstein', 'z']
+            print("The available stats tests are: \n")
+            print("anderson, chisquare, cramer_von_mises, ed, es, fisher_exact, g_test")
+            print("hellinger, jensenshannon, kl_div, ks, mannw, emperical_mmd, psi, t_test")
+            print("perc_text_content_drift, abs_text_content_drift, TVD, wasserstein, z")
+            print("for more information on the stats test, please refer to: \n")
+            print("https://docs.evidentlyai.com/user-guide/customization/options-for-statistical-tests")
+            for col in columns_list:
+                stat_test_choice = input(f"for column {col}, input your stat test")
+                if stat_test_choice not in stat_test_list:
+                    print("stat test currently not available in this version of evidentlyAI")
+                else:
+                    self.stat_test_foreach_column.update({col : stat_test_choice})
+                
 
-    # Available stattests: ['anderson', 'chisquare', 'cramer_von_mises', 'ed', 'es', 'fisher_exact', 'g_test', 'hellinger', 'jensenshannon', 'kl_div', 'ks', 'mannw', 'emperical_mmd', 'psi', 't_test', 'perc_text_content_drift', 'abs_text_content_drift', 'TVD', 'wasserstein', 'z']
+    # Available stattests: ['anderson', 'chisquare', 'cramer_von_mises', 'ed', 'es', 'fisher_exact', 'g_test', 
+    # 'hellinger', 'jensenshannon', 'kl_div', 'ks', 'mannw', 'emperical_mmd', 'psi', 't_test', 'perc_text_content_drift', 
+    # 'abs_text_content_drift', 'TVD', 'wasserstein', 'z']
     def feature_drift_report(self, train_df, test_df, format):
-        self.set_stat_test_foreach_column(test_df)
+        print("do you want to customise the stat test for each column?")
+        print("if yes, input True, else input False")
+        customise = input("Choice:")
+        self.set_stat_test_foreach_column(test_df, customise)
         feature_drift_report = Report(metrics = [
-            # DataDriftTable(per_column_stattest=self.stat_test_foreach_column),
-            DataDriftTable(cat_stattest='l')
+            DataDriftTable(per_column_stattest=self.stat_test_foreach_column),
         ])
         feature_drift_report.run(reference_data=train_df, current_data=test_df)
         if format == 'html':
