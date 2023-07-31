@@ -2,12 +2,21 @@ import numpy as np
 from scipy import stats
 from evidently.metrics import DataDriftTable
 from evidently.metrics import ColumnDriftMetric
-from evidently.metrics import ColumnCorrelationsMetric
 from evidently.report import Report
 import json
+import win32com.client
 
 class ModelMonitoring():
     def __init__(self, train_df):
+        """
+        The function initializes the object with the numerical and categorical columns of a given
+        dataframe, as well as empty dictionaries for statistical tests and their thresholds.
+        
+        :param train_df: The train_df parameter is a pandas DataFrame that contains the training data
+        for your machine learning model. It is used to initialize the object and extract the numerical
+        and categorical columns from the DataFrame
+        """
+        self.columns_list = train_df.columns.tolist()
         self.numerical_columns = self.get_numerical_columns(train_df)
         self.categorical_columns = self.get_categorical_columns(train_df)
         self.stat_test_foreach_column = {}
@@ -225,12 +234,39 @@ class ModelMonitoring():
             prediction_drift_report.save_json('../json_reports/prediction_drift_report.json')
         return prediction_drift_report.as_dict()
     
-    # def check_for_drift(self, json_report):
+    def check_for_drift(self, option):
+        columns_list = self.columns_list
+        feature_drift_list = []
+        if option == 'feature':
+            f = open('../json_reports/feature_drift_report.json')
+            json_report = json.load(f)
+            for col in columns_list:
+                if (json_report['metrics'][0]['result']['drift_by_columns'][col]['drift_score'] < json_report['metrics'][0]['result']['drift_by_columns'][col]['stattest_threshold']):
+                    feature_drift_list.append(col)
 
-    
+            if bool(feature_drift_list):    
+                ol=win32com.client.Dispatch("outlook.application")
+                olmailitem=0x0 #size of the new email
+                newmail=ol.CreateItem(olmailitem)
+                newmail.Subject= 'Feature Drift'
+                newmail.To='hanhuateo@gmail.com'
+                # newmail.CC='xyz@gmail.com'
+                newmail.Body="Hello, these are the columns that have drifted : " + feature_drift_list
+                newmail.Send()
+            f.close()
 
-
-
+        if option == 'prediction':
+            f = open('../json_reports/prediction_drift_report.json')
+            json_report = json.load(f)
+            if (json_report['metrics'][0]['result']['drift_score'] < json_report['metrics'][0]['result']['stattest_threshold']):
+                ol = win32com.client
+                olmailitem=0x0
+                newmail = ol.CreateItem(olmailitem)
+                newmail.Subject = 'Prediction Drift'
+                newmail.To='hanhuateo@gmail.com'
+                # newmail.CC='xyz@gmail.com'
+                newmail.Body = "Hello, prediction column has drifted"
+                newmail.Send()
 
     def check_schema(self, train_df, test_df):
         """
