@@ -1,0 +1,4 @@
+{
+    "categorical_threshold": 0.05,
+    "numerical_threshold": 0.05
+}

@@ -4,15 +4,14 @@ from evidently.metrics import DataDriftTable
 from evidently.metrics import ColumnDriftMetric
 from evidently.metrics import ColumnCorrelationsMetric
 from evidently.report import Report
-# from auto_statstest import StatsTest
-# import win32com.client
+import json
 
 class ModelMonitoring():
     def __init__(self, train_df):
         self.numerical_columns = self.get_numerical_columns(train_df)
         self.categorical_columns = self.get_categorical_columns(train_df)
         self.stat_test_foreach_column = {}
-        self.threshold_foreach_column_stat_test = {}
+        self.stat_test_threshold_foreach_column = {}
     
     def get_numerical_columns(self, df):
         """
@@ -117,6 +116,10 @@ class ModelMonitoring():
         set to `False`, the function will use the default statistical tests. If `customise` is set to
         `True`,, defaults to False (optional)
         """
+        with open("config.json", "r") as jsonfile:
+            data = json.load(jsonfile)
+        print(f"categorical threshold is : {data['categorical_threshold']}")
+        print(f"numerical threshold is : {data['numerical_threshold']}")
         customise = customise
         print(f"customise in set_stat_test_foreach_column : {customise}")
         if (customise == 'False'):
@@ -125,6 +128,10 @@ class ModelMonitoring():
             numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)
             categorical_column_dictionary = self.categorical_stat_test_algo(test_df, self.categorical_columns, len(test_df), categorical_column_dictionary)
             self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
+            for col in self.categorical_columns:
+                self.stat_test_threshold_foreach_column.update({col:data['categorical_threshold']})
+            for col in self.numerical_columns:
+                self.stat_test_threshold_foreach_column.update({col:data['numerical_threshold']})
             # print(self.stat_test_foreach_column)
         if (customise == 'True'):
             columns_list = test_df.columns.tolist()
@@ -148,7 +155,7 @@ class ModelMonitoring():
                 else:
                     self.stat_test_foreach_column.update({col : stat_test_choice})
                 stat_test_threshold = input(f"for column {col}, input your stat test threshold")
-                self.threshold_foreach_column_stat_test.update({col : stat_test_threshold})
+                self.stat_test_threshold_foreach_column.update({col : stat_test_threshold})
     
     def feature_drift_report(self, train_df, test_df, format):
         """
@@ -172,7 +179,7 @@ class ModelMonitoring():
         self.set_stat_test_foreach_column(test_df, customise)
         feature_drift_report = Report(metrics = [
             DataDriftTable(per_column_stattest=self.stat_test_foreach_column,
-                           per_column_stattest_threshold=self.threshold_foreach_column_stat_test),
+                           per_column_stattest_threshold=self.stat_test_threshold_foreach_column),
         ])
         feature_drift_report.run(reference_data=train_df, current_data=test_df)
         if format == 'html':
