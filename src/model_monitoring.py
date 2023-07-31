@@ -5,9 +5,10 @@ from evidently.metrics import ColumnDriftMetric
 from evidently.report import Report
 import json
 import win32com.client
+from joblib import load
 
 class ModelMonitoring():
-    def __init__(self, train_df):
+    def __init__(self):
         """
         The function initializes the object with the numerical and categorical columns of a given
         dataframe, as well as empty dictionaries for statistical tests and their thresholds.
@@ -16,42 +17,12 @@ class ModelMonitoring():
         for your machine learning model. It is used to initialize the object and extract the numerical
         and categorical columns from the DataFrame
         """
-        self.columns_list = train_df.columns.tolist()
-        self.numerical_columns = self.get_numerical_columns(train_df)
-        self.categorical_columns = self.get_categorical_columns(train_df)
+        self.columns_list = load('./preprocessor/training_column_names_list.joblib')
+        self.numerical_columns = load('./preprocessor/training_numerical_columns.joblib')
+        self.categorical_columns = load('./preprocessor/training_categorical_columns.joblib')
         self.stat_test_foreach_column = {}
         self.stat_test_threshold_foreach_column = {}
     
-    def get_numerical_columns(self, df):
-        """
-        The function "get_numerical_columns" takes a dataframe as input and returns a list of column
-        names that contain numerical data.
-        
-        :param df: The parameter "df" is a pandas DataFrame object
-        :return: a list of column names that contain numerical data in the given dataframe.
-        """
-        list_column_names = list(df.columns)
-        numerical_list = []
-        for col in list_column_names:
-            if ((df[col].dtype in [np.int64,float])):
-                numerical_list.append(col)
-                continue
-        return numerical_list
-
-    def get_categorical_columns(self, df):
-        """
-        The function "get_categorical_columns" takes a dataframe as input and returns a list of column
-        names that contain categorical data.
-        
-        :param df: The parameter "df" is a pandas DataFrame object
-        :return: a list of column names that have categorical data types in the given dataframe.
-        """
-        list_column_names = list(df.columns)
-        categorical_list = []
-        for col in list_column_names:
-            if ((df[col].dtype in [object, str, 'category'])):
-                categorical_list.append(col)
-        return categorical_list
     
     def categorical_stat_test_algo(self, df, categorical_columns, num_of_rows, column_dictionary):
         """
@@ -125,7 +96,6 @@ class ModelMonitoring():
         to `False`, the function will use the default statistical tests. If `customise` is set to `True`,,
         defaults to False (optional)
         """
-        
         numerical_column_dictionary = {}
         categorical_column_dictionary = {}
         numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)

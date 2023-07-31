@@ -70,11 +70,13 @@ def data_understanding(df):
     ordinal_features = list(ordinal_features_mapping.keys())
     print(f"Ordinal features are : {ordinal_features}")
     # Ordinal features are : ['BusinessTravel', 'Education', 'EnvironmentSatisfaction', 'JobInvolvement', 'JobLevel', 'JobSatisfaction', 'PerformanceRating', 'RelationshipSatisfaction', 'StockOptionLevel', 'WorkLifeBalance']
-
+    categorical_features = ordinal_features + nominal_features
+    dump(categorical_features, './preprocessor/training_categorical_columns.joblib')
     # Numerical features
     numerical_features = [feature for feature in feature_names if feature not in nominal_features + ordinal_features]
     print(f"Numerical features are : {numerical_features}")
     # Numerical features are : ['Age', 'DailyRate', 'DistanceFromHome', 'HourlyRate', 'MonthlyIncome', 'MonthlyRate', 'NumCompaniesWorked', 'PercentSalaryHike', 'TotalWorkingYears', 'TrainingTimesLastYear', 'YearsAtCompany', 'YearsInCurrentRole', 'YearsSinceLastPromotion', 'YearsWithCurrManager']
+    dump(numerical_features, './preprocessor/training_numerical_columns.joblib')
 
 # Skipped EDA
 
