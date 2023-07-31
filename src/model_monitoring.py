@@ -244,14 +244,15 @@ class ModelMonitoring():
                 if (json_report['metrics'][0]['result']['drift_by_columns'][col]['drift_score'] < json_report['metrics'][0]['result']['drift_by_columns'][col]['stattest_threshold']):
                     feature_drift_list.append(col)
 
-            if bool(feature_drift_list):    
+            if bool(feature_drift_list):
+                print(f"the list of features that has drifted : {feature_drift_list}")
                 ol=win32com.client.Dispatch("outlook.application")
                 olmailitem=0x0 #size of the new email
                 newmail=ol.CreateItem(olmailitem)
                 newmail.Subject= 'Feature Drift'
                 newmail.To='hanhuateo@gmail.com'
                 # newmail.CC='xyz@gmail.com'
-                newmail.Body="Hello, these are the columns that have drifted : " + feature_drift_list
+                newmail.Body=f"Hello, these are the columns that have drifted : {feature_drift_list}"
                 newmail.Send()
             f.close()
 
@@ -259,7 +260,7 @@ class ModelMonitoring():
             f = open('../json_reports/prediction_drift_report.json')
             json_report = json.load(f)
             if (json_report['metrics'][0]['result']['drift_score'] < json_report['metrics'][0]['result']['stattest_threshold']):
-                ol = win32com.client
+                ol=win32com.client.Dispatch("outlook.application")
                 olmailitem=0x0
                 newmail = ol.CreateItem(olmailitem)
                 newmail.Subject = 'Prediction Drift'
