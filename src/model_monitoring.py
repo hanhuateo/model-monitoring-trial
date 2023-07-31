@@ -212,6 +212,8 @@ class ModelMonitoring():
         print("kl_div, psi, jensenshannon, hellinger")
         stat_test = input(f"What is your stat test of choice?")
         stat_test_threshold = input(f"What is the threshold for your stat test?")
+        stat_test_threshold = float(stat_test_threshold)
+        print(stat_test_threshold)
         prediction_drift_report = Report(metrics=[
             ColumnDriftMetric(column_name='prediction', stattest=stat_test, 
                               stattest_threshold=stat_test_threshold),
@@ -222,6 +224,9 @@ class ModelMonitoring():
         else:
             prediction_drift_report.save_json('../json_reports/prediction_drift_report.json')
         return prediction_drift_report.as_dict()
+    
+    # def check_for_drift(self, json_report):
+
     
 
 
