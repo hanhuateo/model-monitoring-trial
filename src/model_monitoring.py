@@ -106,15 +106,15 @@ class ModelMonitoring():
     
     def set_stat_test_foreach_column(self, test_df, customise = False):
         """
-        The function `set_stat_test_foreach_column` sets statistical tests for each column in a given
+        The `set_stat_test_foreach_column` function sets statistical tests for each column in a given
         dataframe, either using default tests or allowing customization.
         
         :param test_df: The `test_df` parameter is a DataFrame that contains the data on which the
         statistical tests will be performed
         :param customise: The `customise` parameter is a boolean flag that determines whether to use the
-        default statistical tests or allow customization of the tests for each column. If `customise` is
-        set to `False`, the function will use the default statistical tests. If `customise` is set to
-        `True`,, defaults to False (optional)
+        default statistical tests or allow customization of the tests for each column. If `customise` is set
+        to `False`, the function will use the default statistical tests. If `customise` is set to `True`,,
+        defaults to False (optional)
         """
         with open("config.json", "r") as jsonfile:
             data = json.load(jsonfile)
