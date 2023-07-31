@@ -235,6 +235,13 @@ class ModelMonitoring():
         return prediction_drift_report.as_dict()
     
     def check_for_drift(self, option):
+        """
+        The function `check_for_drift` checks for feature drift or prediction drift and sends an email
+        notification if drift is detected.
+        
+        :param option: The `option` parameter is used to specify whether to check for feature drift or
+        prediction drift. It can have two possible values: 'feature' or 'prediction'
+        """
         columns_list = self.columns_list
         feature_drift_list = []
         if option == 'feature':
