@@ -1,4 +1,10 @@
 {
-    "categorical_threshold": 0.05,
-    "numerical_threshold": 0.05
+    "categorical":{
+        "p-value": 0.05,
+        "divergence-distance": 0.1
+    },
+    "numerical":{
+        "p-value":0.05,
+        "divergence-distance":0.1
+    }
 }

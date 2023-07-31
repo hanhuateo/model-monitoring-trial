@@ -113,7 +113,7 @@ class ModelMonitoring():
                     column_dictionary.update({col:'wasserstein'})
         return column_dictionary
     
-    def set_stat_test_foreach_column(self, test_df, customise = False):
+    def set_stat_test_foreach_column(self, test_df):
         """
         The `set_stat_test_foreach_column` function sets statistical tests for each column in a given
         dataframe, either using default tests or allowing customization.
@@ -125,48 +125,22 @@ class ModelMonitoring():
         to `False`, the function will use the default statistical tests. If `customise` is set to `True`,,
         defaults to False (optional)
         """
+        
+        numerical_column_dictionary = {}
+        categorical_column_dictionary = {}
+        numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)
+        categorical_column_dictionary = self.categorical_stat_test_algo(test_df, self.categorical_columns, len(test_df), categorical_column_dictionary)
+        self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
+
+    def set_stat_test_threshold_foreach_column(self, incoming_df):
         with open("config.json", "r") as jsonfile:
             data = json.load(jsonfile)
-        print(f"categorical threshold is : {data['categorical_threshold']}")
-        print(f"numerical threshold is : {data['numerical_threshold']}")
-        customise = customise
-        print(f"customise in set_stat_test_foreach_column : {customise}")
-        if (customise == 'False'):
-            numerical_column_dictionary = {}
-            categorical_column_dictionary = {}
-            numerical_column_dictionary = self.numerical_stat_test_algo(test_df, self.numerical_columns, len(test_df), numerical_column_dictionary)
-            categorical_column_dictionary = self.categorical_stat_test_algo(test_df, self.categorical_columns, len(test_df), categorical_column_dictionary)
-            self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
-            for col in self.categorical_columns:
-                self.stat_test_threshold_foreach_column.update({col:data['categorical_threshold']})
-            for col in self.numerical_columns:
-                self.stat_test_threshold_foreach_column.update({col:data['numerical_threshold']})
-            # print(self.stat_test_foreach_column)
-        if (customise == 'True'):
-            columns_list = test_df.columns.tolist()
-            stat_test_list = ['anderson', 'chisquare', 'cramer_von_mises', 'ed', 'es', 'fisher_exact', 'g_test',
-                              'hellinger', 'jensenshannon', 'kl_div', 'ks', 'mannw', 'emperical_mmd', 'psi', 't_test', 
-                              'TVD', 'wasserstein', 'z']
-            print("The available stats tests are: \n")
-            print("For categorical: ")
-            print("chisquare, z, fisher_exact, g_test, TVD")
-            print("For numerical: ")
-            print("ks, wasserstein, anderson, cramer_von_mises, mannw, ed, es, t_test, emperical_mmd")
-            print("For both categorical and numerical: ")
-            print("kl_div, psi, jensenshannon, hellinger")
-            print("for more information on the stats test, please refer to: \n")
-            print("https://docs.evidentlyai.com/user-guide/customization/options-for-statistical-tests")
-            for col in columns_list:
-                stat_test_choice = input(f"for column {col}, input your stat test")
-                if stat_test_choice not in stat_test_list:
-                    print("stat test currently not available in this version of evidentlyAI")
-                    break
-                else:
-                    self.stat_test_foreach_column.update({col : stat_test_choice})
-                stat_test_threshold = input(f"for column {col}, input your stat test threshold")
-                self.stat_test_threshold_foreach_column.update({col : stat_test_threshold})
+        print(f"categorical p-value threshold is : {data['categorical']['p-value']}")
+        print(f"categorical divergence-distance threshold is : {data['categorical']['divergence-distance']}")
+        print(f"numerical p-value threshold is : {data['numerical']['p-value']}")
+        print(f"numerical divergence-distance threshold is : {data['numerical']['divergence-distance']}")
     
-    def feature_drift_report(self, train_df, test_df, format):
+    def feature_drift_report(self, train_df, incoming_df, format):
         """
         The function `feature_drift_report` generates a report on feature drift between a training
         dataset and a test dataset, allowing for customization of statistical tests for each column.
@@ -178,24 +152,20 @@ class ModelMonitoring():
         `train_df` DataFrame, which is used as the reference data for the report
         :param format: The "format" parameter is used to specify the format in which the feature drift
         report should be saved. It can take two values: 'html' or 'json'. If 'html' is chosen, the
-        report will be saved as an HTML file. If 'json' is chosen, the report
+        report will be saved as an HTML file. If 'json' is chosen, the report will be saved as a JSON file.
         :return: the feature drift report as a dictionary.
         """
-        print("do you want to customise the stat test for each column?")
-        print("if yes, input True, else input False")
-        customise = input("Choice:")
-        print(f"customise in feature_drift_report : {customise}")
-        self.set_stat_test_foreach_column(test_df, customise)
+        self.set_stat_test_foreach_column(incoming_df)
+        self.set_stat_test_threshold_foreach_column(incoming_df)
         feature_drift_report = Report(metrics = [
             DataDriftTable(per_column_stattest=self.stat_test_foreach_column,
                            per_column_stattest_threshold=self.stat_test_threshold_foreach_column),
         ])
-        feature_drift_report.run(reference_data=train_df, current_data=test_df)
+        feature_drift_report.run(reference_data=train_df, current_data=incoming_df)
         if format == 'html':
             feature_drift_report.save_html('../html_reports/feature_drift_report.html')
         else:
             feature_drift_report.save_json('../json_reports/feature_drift_report.json')
-        return feature_drift_report.as_dict()
 
     def prediction_drift_report(self, train_df, test_df, format):
         """
@@ -212,27 +182,14 @@ class ModelMonitoring():
         report will be saved as an HTML file. If 'json' is chosen, the report
         :return: the prediction drift report as a dictionary.
         """
-        print("The available stats tests are: \n")
-        print("For categorical: ")
-        print("chisquare, z, fisher_exact, g_test, TVD")
-        print("For numerical: ")
-        print("ks, wasserstein, anderson, cramer_von_mises, mannw, ed, es, t_test, emperical_mmd")
-        print("For both categorical and numerical: ")
-        print("kl_div, psi, jensenshannon, hellinger")
-        stat_test = input(f"What is your stat test of choice?")
-        stat_test_threshold = input(f"What is the threshold for your stat test?")
-        stat_test_threshold = float(stat_test_threshold)
-        print(stat_test_threshold)
         prediction_drift_report = Report(metrics=[
-            ColumnDriftMetric(column_name='prediction', stattest=stat_test, 
-                              stattest_threshold=stat_test_threshold),
+            ColumnDriftMetric(column_name='prediction'),
         ])
         prediction_drift_report.run(reference_data=train_df, current_data=test_df)
         if format == 'html':
             prediction_drift_report.save_html('../html_reports/prediction_drift_report.html')
         else:
             prediction_drift_report.save_json('../json_reports/prediction_drift_report.json')
-        return prediction_drift_report.as_dict()
     
     def check_for_drift(self, option):
         """
@@ -276,7 +233,7 @@ class ModelMonitoring():
                 newmail.Body = "Hello, prediction column has drifted"
                 newmail.Send()
 
-    def check_schema(self, train_df, test_df):
+    def check_schema(self, train_df, incoming_df):
         """
         The function checks if two dataframes have the same set of columns.
         
@@ -288,42 +245,13 @@ class ModelMonitoring():
         or not.
         """
         train_column_list = train_df.columns.tolist()
-        test_column_list = test_df.columns.tolist()
+        test_column_list = incoming_df.columns.tolist()
         train_set = set(train_column_list)
         test_set = set(test_column_list)
-        if (train_set == test_set):
-            print(f"train and test dataset have the same features")
-            return 1
-        else:
-            print(f"train and test dataset do not have the same features")
-            return 0
+        if (train_set != test_set):
+            raise Exception(f"the two datasets do not have the same features")
 
-    def check_schema_postprocessing(self, processed_train_df, processed_test_df):
-        """
-        The function checks if the processed train and test datasets have the same features and raises
-        an exception if they don't.
-        
-        :param processed_train_df: The processed_train_df parameter is a DataFrame that represents the
-        processed training dataset. It contains the features (columns) that have been preprocessed and
-        transformed for training the model
-        :param processed_test_df: The parameter `processed_test_df` is a DataFrame that represents the
-        processed test dataset. It contains the features and corresponding values for each instance in
-        the test dataset
-        :return: 1 if the processed_train_df and processed_test_df have the same processed features. If
-        they do not have the same processed features, the function raises an exception.
-        """
-        processed_train_column_list = processed_train_df.columns.tolist()
-        processed_test_column_list = processed_test_df.columns.tolist()
-        processed_train_set = set(processed_train_column_list)
-        processed_test_set = set(processed_test_column_list)
-        if (processed_train_set == processed_test_set):
-            print(f"train and test dataset have the same processed features")
-            return 1
-        else:
-            print(f"train and test dataset do not have the same processed features")
-            raise 0    
-
-    def check_data_types(self, train_df, test_df):
+    def check_data_types(self, train_df, incoming_df):
         """
         The function checks if the data types of columns in the training and test datasets are the same,
         and raises an error if they are not.
@@ -335,34 +263,10 @@ class ModelMonitoring():
         """
         columns_list = train_df.columns.tolist()
         for col in columns_list:
-            if (train_df[col].dtype == test_df[col].dtype):
-                # print(f"Data Type of {col} from both datasets are the same")
-                continue
-            else:
-                print(f"Column name is : {col}")
+            if (train_df[col].dtype != incoming_df[col].dtype):
                 raise TypeError(f"Data Type of {col} in production does not match with training")
-        print(f"The data types for all columns from both datasets are the same")
 
-    def replace_column_names(self, df):   
-        """
-        The function replaces spaces and dashes in column names of a DataFrame with underscores.
-        
-        :param df: The parameter `df` is a pandas DataFrame object
-        """
-        df.rename(columns=lambda s: s.replace(" ", "_" ), inplace=True)
-        df.rename(columns=lambda s: s.replace("-", "_"), inplace=True) 
-
-    def handle_bad_data(self, df):
-        """
-        The function replaces any occurrences of '?' or '-' in a DataFrame with NaN values.
-        
-        :param df: The parameter `df` is a pandas DataFrame object
-        :return: the modified dataframe with '?' and '-' values replaced with NaN.
-        """
-        df = df.replace(['?', '-'], np.nan)
-        return df
-
-    def data_check(self, train_df, test_df, processed_train_df, processed_test_df):
+    def data_check(self, train_df, incoming_df, processed_train_df, processed_incoming_df):
         """
         The `data_check` function checks the schema and data types of the incoming data and prints error
         messages if there are any issues.
@@ -379,14 +283,7 @@ class ModelMonitoring():
         processed or transformed version of the test data. It is the output of some preprocessing steps
         applied to the test data before using it for further analysis or modeling
         """
-        self.replace_column_names(test_df)
-        test_df = self.handle_bad_data(test_df)
-        check_schema_flag = self.check_schema(train_df, test_df)
-        check_data_type_flag = self.check_data_types(train_df, test_df)
-        check_processed_schema_flag = self.check_schema_postprocessing(processed_train_df, processed_test_df)
-        if check_data_type_flag == 0:
-            print(f"there is a problem with the data types of the incoming data")
-        if check_processed_schema_flag == 0:
-            print(f"there is a problem with the preprocessing of the incoming data")
-        if check_schema_flag == 0:
-            print(f"there is a change in the schema of the incoming data")
+        self.check_data_types(train_df, incoming_df)
+        self.check_schema(train_df, incoming_df)
+        self.check_schema(processed_train_df, processed_incoming_df)
+        

@@ -85,6 +85,9 @@ def data_preprocessing(df):
     y = df['Attrition']
     # y.to_csv("../data/train_data/employee_attrition_ground_truth.csv", index=False)
 
+    columns_list = X.columns.tolist()
+    dump(columns_list, './preprocessor/training_column_names_list.joblib')
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42, stratify=y)
 
     # shape of train set, test set
