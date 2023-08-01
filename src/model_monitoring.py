@@ -103,12 +103,7 @@ class ModelMonitoring():
         self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
 
     def set_stat_test_threshold_foreach_column(self, incoming_df):
-        with open("config.json", "r") as jsonfile:
-            data = json.load(jsonfile)
-        print(f"categorical p-value threshold is : {data['categorical']['p-value']}")
-        print(f"categorical divergence-distance threshold is : {data['categorical']['divergence-distance']}")
-        print(f"numerical p-value threshold is : {data['numerical']['p-value']}")
-        print(f"numerical divergence-distance threshold is : {data['numerical']['divergence-distance']}")
+        pass
     
     def feature_drift_report(self, train_df, incoming_df, format):
         """
@@ -137,7 +132,7 @@ class ModelMonitoring():
         else:
             feature_drift_report.save_json('../json_reports/feature_drift_report.json')
 
-    def prediction_drift_report(self, train_df, test_df, format):
+    def prediction_drift_report(self, train_df, test_df, stat_test, stat_test_threshold, format):
         """
         The function `prediction_drift_report` generates a prediction drift report using statistical
         tests and saves it in either HTML or JSON format.
@@ -153,7 +148,9 @@ class ModelMonitoring():
         :return: the prediction drift report as a dictionary.
         """
         prediction_drift_report = Report(metrics=[
-            ColumnDriftMetric(column_name='prediction'),
+            ColumnDriftMetric(column_name='prediction',
+                              stattest=stat_test,
+                              stattest_threshold=stat_test_threshold),
         ])
         prediction_drift_report.run(reference_data=train_df, current_data=test_df)
         if format == 'html':
