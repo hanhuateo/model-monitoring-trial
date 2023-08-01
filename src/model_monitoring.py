@@ -105,6 +105,9 @@ class ModelMonitoring():
     def set_stat_test_threshold_foreach_column(self, incoming_df):
         pass
     
+    def write_config_file(self, config_file):
+        pass        
+    
     def feature_drift_report(self, train_df, incoming_df, format):
         """
         The function `feature_drift_report` generates a report on feature drift between a training
@@ -133,6 +136,16 @@ class ModelMonitoring():
             feature_drift_report.save_json('../json_reports/feature_drift_report.json')
 
     def prediction_drift_report(self, train_df, test_df, stat_test, stat_test_threshold, format):
+        """
+        For categorical: 
+        chisquare, z, fisher_exact, g_test, TVD
+        For numerical: 
+        ks, wasserstein, anderson, cramer_von_mises, mannw, ed, es, t_test, emperical_mmd
+        For both categorical and numerical: 
+        kl_div, psi, jensenshannon, hellinger
+        for more information on the stats test, please refer to: 
+        https://docs.evidentlyai.com/user-guide/customization/options-for-statistical-tests
+        """
         """
         The function `prediction_drift_report` generates a prediction drift report using statistical
         tests and saves it in either HTML or JSON format.
