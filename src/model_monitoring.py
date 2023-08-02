@@ -6,6 +6,7 @@ from evidently.report import Report
 import json
 # import win32com.client
 from joblib import load
+from evidently import ColumnMapping
 
 class ModelMonitoring():
     def __init__(self):
@@ -22,6 +23,9 @@ class ModelMonitoring():
         self.categorical_columns = load('./preprocessor/training_categorical_columns.joblib')
         self.stat_test_foreach_column = {}
         self.stat_test_threshold_foreach_column = {}
+        self.column_mapping = ColumnMapping()
+        self.column_mapping.numerical_features = self.numerical_columns
+        self.column_mapping.categorical_features = self.categorical_columns
     
     def categorical_stat_test_algo(self, df, categorical_columns, num_of_rows, column_dictionary):
         """
@@ -102,16 +106,9 @@ class ModelMonitoring():
         self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
 
     def set_stat_test_threshold_foreach_column(self):
-        data = self.load_data_from_json('config.json')
+        with open('config.json', 'r') as f:
+            data = json.load(f)
         self.set_stat_test_threshold_foreach_column = data
-
-    def load_data_from_json(self, file_name):
-        try:
-            with open(file_name, 'r') as f:
-                data = json.load(f)
-        except FileNotFoundError:
-            data = []  # If the file doesn't exist, start with an empty list
-        return data
 
     def save_data_to_json(self, data, file_name):
         with open(file_name, 'w') as f:
@@ -139,29 +136,20 @@ class ModelMonitoring():
         :return: the feature drift report as a dictionary.
         """
         self.set_stat_test_foreach_column(incoming_df)
-        self.set_stat_test_threshold_foreach_column(incoming_df)
+        self.set_stat_test_threshold_foreach_column()
         feature_drift_report = Report(metrics = [
             DataDriftTable(per_column_stattest=self.stat_test_foreach_column,
-                        per_column_stattest_threshold=self.stat_test_threshold_foreach_column),
+                        per_column_stattest_threshold=self.stat_test_threshold_foreach_column,
+                        ),
         ])
-        feature_drift_report.run(reference_data=train_df, current_data=incoming_df)
+        feature_drift_report.run(reference_data=train_df, current_data=incoming_df, column_mapping=self.column_mapping)
         if format == 'html':
             feature_drift_report.save_html('../html_reports/feature_drift_report.html')
         else:
             feature_drift_report.save_json('../json_reports/feature_drift_report.json')
             
 
-    def prediction_drift_report(self, train_df, test_df, stat_test, stat_test_threshold, format):
-        """
-        For categorical: 
-        chisquare, z, fisher_exact, g_test, TVD
-        For numerical: 
-        ks, wasserstein, anderson, cramer_von_mises, mannw, ed, es, t_test, emperical_mmd
-        For both categorical and numerical: 
-        kl_div, psi, jensenshannon, hellinger
-        for more information on the stats test, please refer to: 
-        https://docs.evidentlyai.com/user-guide/customization/options-for-statistical-tests
-        """
+    def prediction_drift_report(self, train_df, incoming_df, stat_test, stat_test_threshold, format):
         """
         The function `prediction_drift_report` generates a prediction drift report using statistical
         tests and saves it in either HTML or JSON format.
@@ -181,7 +169,7 @@ class ModelMonitoring():
                               stattest=stat_test,
                               stattest_threshold=stat_test_threshold),
         ])
-        prediction_drift_report.run(reference_data=train_df, current_data=test_df)
+        prediction_drift_report.run(reference_data=train_df, current_data=incoming_df)
         if format == 'html':
             prediction_drift_report.save_html('../html_reports/prediction_drift_report.html')
         else:

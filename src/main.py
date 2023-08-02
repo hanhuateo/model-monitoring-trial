@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from joblib import load
 from train_model import data_cleaning
-
+from numpy import savetxt
 
 """
 this part is to output the cleaned dataset for incoming data, which adds on the prediction column
@@ -18,6 +18,8 @@ attrition = incoming_df['Attrition']
 
 incoming_df = incoming_df.drop(columns=['Attrition'])
 incoming_df_processed = column_transformer.transform(incoming_df)
+incoming_df_processed = pd.DataFrame(incoming_df_processed, columns = [column_transformer.get_feature_names_out()])
+incoming_df_processed.to_csv("../data/incoming_features_df_processed.csv", index=False)
 attrition_pred = RF_clf.predict(incoming_df_processed)
 attrition_pred_inverse = label_encoder.inverse_transform(attrition_pred)
 incoming_df['prediction'] = attrition_pred_inverse
@@ -30,6 +32,8 @@ so that it can be used to compare drift with the incoming dataset
 test_features_df = pd.read_csv('../data/employee_features_test.csv')
 test_ground_truth_df = pd.read_csv('../data/employee_ground_truth_test.csv')
 test_features_df_processed = column_transformer.transform(test_features_df)
+test_features_df_processed = pd.DataFrame(test_features_df_processed, columns = [column_transformer.get_feature_names_out()])
+test_features_df_processed.to_csv("../data/test_features_df_processed.csv", index=False)
 test_prediction = RF_clf.predict(test_features_df_processed)
 test_prediction_inverse = label_encoder.inverse_transform(test_prediction)
 test_features_df['prediction'] = test_prediction_inverse
