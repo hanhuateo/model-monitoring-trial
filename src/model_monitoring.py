@@ -105,7 +105,6 @@ class ModelMonitoring():
         data = self.load_data_from_json('config.json')
         self.set_stat_test_threshold_foreach_column = data
 
-
     def load_data_from_json(self, file_name):
         try:
             with open(file_name, 'r') as f:

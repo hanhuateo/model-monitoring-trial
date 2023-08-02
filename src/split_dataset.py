@@ -1,6 +1,10 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+"""
+this python script will only be executed once in order to split the employee dataset into train and 
+incoming so as to simulate incoming dataset 
+"""
 df = pd.read_csv("../data/raw/employee.csv")
 X_train, X_test = train_test_split(df, test_size=0.5, random_state=42, stratify=df['Attrition'])
 print(X_train)
