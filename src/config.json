@@ -1,10 +1,1 @@
-{
-    "categorical":{
-        "p-value": 0.05,
-        "divergence-distance": 0.1
-    },
-    "numerical":{
-        "p-value":0.05,
-        "divergence-distance":0.1
-    }
-}
+{"Age": 0.05, "BusinessTravel": 0.05, "DailyRate": 0.05, "Department": 0.05, "DistanceFromHome": 0.05, "Education": 0.05, "EducationField": 0.05, "EnvironmentSatisfaction": 0.05, "Gender": 0.05, "HourlyRate": 0.05, "JobInvolvement": 0.05, "JobLevel": 0.05, "JobRole": 0.05, "JobSatisfaction": 0.05, "MaritalStatus": 0.05, "MonthlyIncome": 0.05, "MonthlyRate": 0.05, "NumCompaniesWorked": 0.05, "OverTime": 0.05, "PercentSalaryHike": 0.05, "PerformanceRating": 0.05, "RelationshipSatisfaction": 0.05, "StockOptionLevel": 0.05, "TotalWorkingYears": 0.05, "TrainingTimesLastYear": 0.05, "WorkLifeBalance": 0.05, "YearsAtCompany": 0.05, "YearsInCurrentRole": 0.05, "YearsSinceLastPromotion": 0.05, "YearsWithCurrManager": 0.05}

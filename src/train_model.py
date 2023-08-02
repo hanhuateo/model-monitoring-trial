@@ -1,6 +1,4 @@
 import pandas as pd
-import numpy as np
-# from numpy import savetxt
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer, make_column_selector
 
@@ -16,19 +14,7 @@ from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, average_pre
 
 from joblib import dump
 
-# this part is to split the original dataset into a reference dataset (X_train) and an unseen dataset (X_test)
-# will not be used again after first time running
-
-# df = pd.read_csv("../data/raw/employee.csv")
-# X_train, X_test = train_test_split(df, test_size=0.5, random_state=42, stratify=df['Attrition'])
-# print(X_train)
-# print(X_test)
-# X_train.reset_index(drop=True, inplace=True)
-# X_test.reset_index(drop=True, inplace=True)
-# print(X_train)
-# print(X_test)
-# X_train.to_csv("../data/raw_split_data/employee_train.csv", index=False)
-# X_test.to_csv("../data/raw_split_data/employee_test.csv", index=False)
+from numpy import savetxt
 
 # this part is to go through the standard data science pipeline to train the model
 
@@ -78,20 +64,21 @@ def data_understanding(df):
     # Numerical features are : ['Age', 'DailyRate', 'DistanceFromHome', 'HourlyRate', 'MonthlyIncome', 'MonthlyRate', 'NumCompaniesWorked', 'PercentSalaryHike', 'TotalWorkingYears', 'TrainingTimesLastYear', 'YearsAtCompany', 'YearsInCurrentRole', 'YearsSinceLastPromotion', 'YearsWithCurrManager']
     dump(numerical_features, './preprocessor/training_numerical_columns.joblib')
 
-# Skipped EDA
-
 # Data Preprocessing
 def data_preprocessing(df):
     X = df.drop(columns=['Attrition'])
-    # X.to_csv("../data/train_data/employee_train_features.csv", index=False)
     y = df['Attrition']
-    # y.to_csv("../data/train_data/employee_attrition_ground_truth.csv", index=False)
 
     columns_list = X.columns.tolist()
     dump(columns_list, './preprocessor/training_column_names_list.joblib')
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42, stratify=y)
 
+    # print(f"X_test is {X_test}, type of X_test is {type(X_test)}")
+    # print(f"y_test is {y_test}, type of y_test is {type(y_test)}")
+    X_test.to_csv("../data/employee_features_test.csv", index=False)
+    y_test.to_csv("../data/employee_ground_truth_test.csv", index=False)
+    
     # shape of train set, test set
     print(f"Shape of X_train: {X_train.shape}, Shape of y_train: {y_train.shape}")
     print(f"Shape of X_test: {X_test.shape}, Shape of y_test: {y_test.shape}")
@@ -145,7 +132,6 @@ def data_preprocessing(df):
 
     dump(LE, './preprocessor/label_encoder.pkl')
     
-    # X_train_processed, y_train_processed, X_test_processed, y_test_processed = X_train, y_train, X_test, y_test
     return X_train_processed, y_train_processed, X_test_processed, y_test_processed
 
 # random forest
@@ -163,8 +149,6 @@ def RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_
     # hyperparameter tuning
     RF_search = GridSearchCV(RF_clf, param_grid=param_grid, scoring='roc_auc', cv=5, verbose=1, n_jobs=-1)
     RF_search.fit(X_train_processed, y_train_processed)
-    # print(f"X_train_processed : {X_train_processed}")
-    # print(f"y_train_processed : {y_train_processed}")
     RF_clf = RandomForestClassifier(**RF_search.best_params_, class_weight='balanced', random_state=42)
     RF_clf.fit(X_train_processed, y_train_processed)
     dump(RF_clf, './model/RF_clf.joblib')
@@ -188,7 +172,6 @@ def RandomForestModel(X_train_processed, y_train_processed, X_test_processed, y_
     # Test metrics are: accuracy = 0.8641304347826086, f1 = 0.4897959183673469, roc_auc = 0.7891774891774891, average precision = 0.5623943331157689
 
 def main():
-    # read dataset
     df = pd.read_csv("../data/raw_split_data/employee_train.csv")
     df = data_cleaning(df)
     data_understanding(df)

@@ -23,7 +23,6 @@ class ModelMonitoring():
         self.stat_test_foreach_column = {}
         self.stat_test_threshold_foreach_column = {}
     
-    
     def categorical_stat_test_algo(self, df, categorical_columns, num_of_rows, column_dictionary):
         """
         The function `categorical_stat_test_algo` determines the appropriate statistical test to use for
@@ -102,12 +101,29 @@ class ModelMonitoring():
         categorical_column_dictionary = self.categorical_stat_test_algo(test_df, self.categorical_columns, len(test_df), categorical_column_dictionary)
         self.stat_test_foreach_column = {**categorical_column_dictionary, **numerical_column_dictionary}
 
-    def set_stat_test_threshold_foreach_column(self, incoming_df):
-        pass
-    
-    def write_config_file(self, config_file):
-        pass        
-    
+    def set_stat_test_threshold_foreach_column(self):
+        data = self.load_data_from_json('config.json')
+        self.set_stat_test_threshold_foreach_column = data
+
+
+    def load_data_from_json(self, file_name):
+        try:
+            with open(file_name, 'r') as f:
+                data = json.load(f)
+        except FileNotFoundError:
+            data = []  # If the file doesn't exist, start with an empty list
+        return data
+
+    def save_data_to_json(self, data, file_name):
+        with open(file_name, 'w') as f:
+            json.dump(data, f)
+
+    def write_to_config(self):
+        data = {}
+        for col in self.columns_list:
+            data.update({col: 0.05})
+        self.save_data_to_json(data, 'config.json')
+
     def feature_drift_report(self, train_df, incoming_df, format):
         """
         The function `feature_drift_report` generates a report on feature drift between a training
@@ -127,13 +143,14 @@ class ModelMonitoring():
         self.set_stat_test_threshold_foreach_column(incoming_df)
         feature_drift_report = Report(metrics = [
             DataDriftTable(per_column_stattest=self.stat_test_foreach_column,
-                           per_column_stattest_threshold=self.stat_test_threshold_foreach_column),
+                        per_column_stattest_threshold=self.stat_test_threshold_foreach_column),
         ])
         feature_drift_report.run(reference_data=train_df, current_data=incoming_df)
         if format == 'html':
             feature_drift_report.save_html('../html_reports/feature_drift_report.html')
         else:
             feature_drift_report.save_json('../json_reports/feature_drift_report.json')
+            
 
     def prediction_drift_report(self, train_df, test_df, stat_test, stat_test_threshold, format):
         """
