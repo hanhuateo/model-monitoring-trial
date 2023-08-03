@@ -147,6 +147,20 @@ class ModelMonitoring():
             feature_importance_mapping.update({col : importance})
         print(total_importance)
         print(feature_importance_mapping)
+        return feature_importance_mapping
     
-    def check_dataset_drift(self, feature_importance_mapping):
-        pass
+    def check_dataset_drift(self, feature_importance_mapping, json_report):
+        processed_feature_importance_mapping = self.get_processed_feature_importance_mapping()
+        feature_importance_mapping = self.get_feature_importance_mapping(processed_feature_importance_mapping)
+        with open('../json_reports/feature_drift_report.json', 'r') as f:
+            data = json.load(f)
+        columns_list = self.columns_list
+        importance_score_drifted = 0.00
+        for col in columns_list:
+            if (data['metrics'][0]['result']['drift_by_columns'][col]['drift_detected'] == True):
+                importance_score_drifted += feature_importance_mapping[col]
+            else:
+                continue
+        dataset_drift_percentage = importance_score_drifted / 1
+        if dataset_drift_percentage > 0.5:
+            print(f"dataset has drifted")
